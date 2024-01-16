@@ -2,7 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -71,12 +71,15 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         //ArrayList<ChessMove> pieceMoves = new ArrayList<>();
         ArrayList<ChessMove> pieceMoves = new ArrayList<>();
+        /*
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
+         */
         switch (board.getPiece(myPosition).getPieceType()) {
             case BISHOP -> {
                 System.out.println("This is a bishop!");
                 //Loop through the diagonal, starting top-left
+                /*
                 while((curPos[0]+1 != 9)&&(curPos[1]-1 != 0)){
                     curPos[0]++;
                     curPos[1]--;
@@ -84,8 +87,10 @@ public class ChessPiece {
                     ChessMove newMove = new ChessMove(myPosition,newPos);
                     pieceMoves.add(newMove);
                 }
-                curPos = startPos.clone();
+                 */
+                diagonal("Top","Left",board,myPosition,pieceMoves);
                 //Now top-right
+                /*
                 while((curPos[0]+1 != 9)&&(curPos[1]+1 != 9)){
                     curPos[0]++;
                     curPos[1]++;
@@ -93,8 +98,10 @@ public class ChessPiece {
                     ChessMove newMove = new ChessMove(myPosition,newPos);
                     pieceMoves.add(newMove);
                 }
-                curPos = startPos.clone();
+                 */
+                diagonal("Top","Right",board,myPosition,pieceMoves);
                 //Now bottom-left
+                /*
                 while((curPos[0]-1 != 0)&&(curPos[1]-1 != 0)){
                     curPos[0]--;
                     curPos[1]--;
@@ -102,8 +109,10 @@ public class ChessPiece {
                     ChessMove newMove = new ChessMove(myPosition,newPos);
                     pieceMoves.add(newMove);
                 }
-                curPos = startPos.clone();
-                //Now bottom-left
+                 */
+                diagonal("Bottom","Left",board,myPosition,pieceMoves);
+                //Now bottom-right
+                /*
                 while((curPos[0]-1 != 0)&&(curPos[1]+1 != 9)){
                     curPos[0]--;
                     curPos[1]++;
@@ -111,11 +120,75 @@ public class ChessPiece {
                     ChessMove newMove = new ChessMove(myPosition,newPos);
                     pieceMoves.add(newMove);
                 }
+                 */
+                diagonal("Bottom","Right",board,myPosition,pieceMoves);
+
             }
             default -> {
                 System.out.println("What is this piece?");
             }
         }
         return pieceMoves;
+    }
+    private void diagonal(String Vertical, String Horizontal, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
+        final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
+        int[] curPos = startPos.clone();
+        if((Objects.equals(Vertical, "Top")) && (Objects.equals(Horizontal, "Left"))){
+            while((curPos[0]+1 != 9)&&(curPos[1]-1 != 0)){
+                curPos[0]++;
+                curPos[1]--;
+                ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+                ChessMove newMove = new ChessMove(myPosition,newPos);
+                pieceMoves.add(newMove);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+            }
+        }else if((Objects.equals(Vertical, "Top")) && (Objects.equals(Horizontal, "Right"))){
+            while((curPos[0]+1 != 9)&&(curPos[1]+1 != 9)){
+                curPos[0]++;
+                curPos[1]++;
+                ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+                ChessMove newMove = new ChessMove(myPosition,newPos);
+                pieceMoves.add(newMove);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+            }
+        }else if((Objects.equals(Vertical, "Bottom")) && (Objects.equals(Horizontal, "Left"))){
+            while((curPos[0]-1 != 0)&&(curPos[1]-1 != 0)){
+                curPos[0]--;
+                curPos[1]--;
+                ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+                ChessMove newMove = new ChessMove(myPosition,newPos);
+                pieceMoves.add(newMove);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+            }
+        }else if((Objects.equals(Vertical, "Bottom")) && (Objects.equals(Horizontal, "Right"))){
+            while((curPos[0]-1 != 0)&&(curPos[1]+1 != 9)){
+                curPos[0]--;
+                curPos[1]++;
+                ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+                ChessMove newMove = new ChessMove(myPosition,newPos);
+                pieceMoves.add(newMove);
+                if((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
+                    break;
+                }
+            }
+        }
     }
 }
