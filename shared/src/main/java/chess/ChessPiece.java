@@ -85,7 +85,7 @@ public class ChessPiece {
          */
         switch (board.getPiece(myPosition).getPieceType()) {
             case BISHOP -> {
-                System.out.println("This is a bishop!");
+                //System.out.println("This is a bishop!");
                 //Loop through the diagonal, starting top-left
                 diagonal("Top","Left",board,myPosition,pieceMoves);
                 //Now top-right
@@ -97,7 +97,7 @@ public class ChessPiece {
 
             }
             case ROOK -> {
-                System.out.println("This is a rook!");
+                //System.out.println("This is a rook!");
                 //Loop through the orthogonal, starting up
                 orthogonal("Up",board,myPosition,pieceMoves);
                 //Now down
@@ -108,7 +108,7 @@ public class ChessPiece {
                 orthogonal("Right",board,myPosition,pieceMoves);
             }
             case QUEEN -> {
-                System.out.println("This is a queen!");
+                //System.out.println("This is a queen!");
                 //Loop through the diagonal, then the orthogonal
                 //Loop through the diagonal, starting top-left
                 diagonal("Top","Left",board,myPosition,pieceMoves);
@@ -128,7 +128,7 @@ public class ChessPiece {
                 orthogonal("Right",board,myPosition,pieceMoves);
             }
             case KNIGHT -> {
-                System.out.println("This is a Knight!");
+                //System.out.println("This is a Knight!");
                 //Start with the top L's
                 knightL("Up",board,myPosition,pieceMoves);
                 //Now with the bottom L's
@@ -139,11 +139,11 @@ public class ChessPiece {
                 knightL("Right",board,myPosition,pieceMoves);
             }
             case PAWN -> {
-                System.out.println("This is a Pawn!");
+                //System.out.println("This is a Pawn!");
                 pawn(board,myPosition,pieceMoves);
             }
             case KING -> {
-                System.out.println("This is a King!");
+                //System.out.println("This is a King!");
                 king(board,myPosition,pieceMoves);
             }
             default -> {
