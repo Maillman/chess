@@ -11,6 +11,14 @@ import java.util.Objects;
 
 //Generate to test comparison here as well?
 public class ChessMove {
+    @Override
+    public String toString() {
+        return "ChessMove{" +
+                "startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", promotionPiece=" + promotionPiece +
+                '}';
+    }
 
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
