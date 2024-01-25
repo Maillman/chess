@@ -87,45 +87,62 @@ public class ChessPiece {
             case BISHOP -> {
                 //System.out.println("This is a bishop!");
                 //Loop through the diagonal, starting top-left
-                diagonal("Top","Left",board,myPosition,pieceMoves);
+                //diagonal("Top","Left",board,myPosition,pieceMoves);
                 //Now top-right
-                diagonal("Top","Right",board,myPosition,pieceMoves);
+                //diagonal("Top","Right",board,myPosition,pieceMoves);
                 //Now bottom-left
-                diagonal("Bottom","Left",board,myPosition,pieceMoves);
+                //diagonal("Bottom","Left",board,myPosition,pieceMoves);
                 //Now bottom-right
-                diagonal("Bottom","Right",board,myPosition,pieceMoves);
-
+                //diagonal("Bottom","Right",board,myPosition,pieceMoves);
+                directional("UpLeft",board,myPosition,pieceMoves);
+                directional("UpRight",board,myPosition,pieceMoves);
+                directional("DownLeft",board,myPosition,pieceMoves);
+                directional("DownRight",board,myPosition,pieceMoves);
             }
             case ROOK -> {
                 //System.out.println("This is a rook!");
                 //Loop through the orthogonal, starting up
-                orthogonal("Up",board,myPosition,pieceMoves);
+                //orthogonal("Up",board,myPosition,pieceMoves);
                 //Now down
-                orthogonal("Down",board,myPosition,pieceMoves);
+                //orthogonal("Down",board,myPosition,pieceMoves);
                 //Now left
-                orthogonal("Left",board,myPosition,pieceMoves);
+                //orthogonal("Left",board,myPosition,pieceMoves);
                 //Now right
-                orthogonal("Right",board,myPosition,pieceMoves);
+                //orthogonal("Right",board,myPosition,pieceMoves);
+                //Checked Improved Code
+                directional("Up",board,myPosition,pieceMoves);
+                directional("Down",board,myPosition,pieceMoves);
+                directional("Left",board,myPosition,pieceMoves);
+                directional("Right",board,myPosition,pieceMoves);
+
             }
             case QUEEN -> {
                 //System.out.println("This is a queen!");
                 //Loop through the diagonal, then the orthogonal
                 //Loop through the diagonal, starting top-left
-                diagonal("Top","Left",board,myPosition,pieceMoves);
+                //diagonal("Top","Left",board,myPosition,pieceMoves);
                 //Now top-right
-                diagonal("Top","Right",board,myPosition,pieceMoves);
+                //diagonal("Top","Right",board,myPosition,pieceMoves);
                 //Now bottom-left
-                diagonal("Bottom","Left",board,myPosition,pieceMoves);
+                //diagonal("Bottom","Left",board,myPosition,pieceMoves);
                 //Now bottom-right
-                diagonal("Bottom","Right",board,myPosition,pieceMoves);
+                //diagonal("Bottom","Right",board,myPosition,pieceMoves);
                 //Loop through the orthogonal, starting up
-                orthogonal("Up",board,myPosition,pieceMoves);
+                //orthogonal("Up",board,myPosition,pieceMoves);
                 //Now down
-                orthogonal("Down",board,myPosition,pieceMoves);
+                //orthogonal("Down",board,myPosition,pieceMoves);
                 //Now left
-                orthogonal("Left",board,myPosition,pieceMoves);
+                //orthogonal("Left",board,myPosition,pieceMoves);
                 //Now right
-                orthogonal("Right",board,myPosition,pieceMoves);
+                //orthogonal("Right",board,myPosition,pieceMoves);
+                directional("UpLeft",board,myPosition,pieceMoves);
+                directional("UpRight",board,myPosition,pieceMoves);
+                directional("DownLeft",board,myPosition,pieceMoves);
+                directional("DownRight",board,myPosition,pieceMoves);
+                directional("Up",board,myPosition,pieceMoves);
+                directional("Down",board,myPosition,pieceMoves);
+                directional("Left",board,myPosition,pieceMoves);
+                directional("Right",board,myPosition,pieceMoves);
             }
             case KNIGHT -> {
                 //System.out.println("This is a Knight!");
@@ -152,7 +169,7 @@ public class ChessPiece {
         }
         return pieceMoves;
     }
-    private void diagonal(String Vertical, String Horizontal, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
+    /*private void diagonal(String Vertical, String Horizontal, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
         if((Objects.equals(Vertical, "Top")) && (Objects.equals(Horizontal, "Left"))){
@@ -212,9 +229,9 @@ public class ChessPiece {
                 }
             }
         }
-    }
+    }*/
 
-    private void orthogonal(String Direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
+    /*private void orthogonal(String Direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
         if(Objects.equals(Direction,"Up")){
@@ -270,14 +287,14 @@ public class ChessPiece {
                 }
             }
         }
-    }
+    }*/
     private void knightL(String Direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
         if(Objects.equals(Direction, "Up")){
             if(!(curPos[0]+2 >= 9)){
                 curPos[0] = curPos[0] + 2;
-                if(!(curPos[1]-2 <= 0)){
+                if(!(curPos[1]-1 <= 0)){
                     curPos[1]--;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -285,8 +302,8 @@ public class ChessPiece {
                         pieceMoves.add(newMove);
                     }
                 }
-                if(!(curPos[1]+2 >= 9)){
-                    curPos[1] = startPos[1];
+                curPos[1] = startPos[1];
+                if(!(curPos[1]+1 >= 9)){
                     curPos[1]++;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -298,7 +315,7 @@ public class ChessPiece {
         }else if(Objects.equals(Direction, "Down")){
             if(!(curPos[0]-2 <= 0)){
                 curPos[0] = curPos[0] - 2;
-                if(!(curPos[1]-2 <= 0)){
+                if(!(curPos[1]-1 <= 0)){
                     curPos[1]--;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -306,8 +323,8 @@ public class ChessPiece {
                         pieceMoves.add(newMove);
                     }
                 }
-                if(!(curPos[1]+2 >= 9)){
-                    curPos[1] = startPos[1];
+                curPos[1] = startPos[1];
+                if(!(curPos[1]+1 >= 9)){
                     curPos[1]++;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -327,8 +344,8 @@ public class ChessPiece {
                         pieceMoves.add(newMove);
                     }
                 }
-                if(!(curPos[0]+2 >= 9)){
-                    curPos[0] = startPos[0];
+                curPos[0] = startPos[0];
+                if(!(curPos[0]+1 >= 9)){
                     curPos[0]++;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -348,8 +365,8 @@ public class ChessPiece {
                         pieceMoves.add(newMove);
                     }
                 }
-                if(!(curPos[0]+2 >= 9)){
-                    curPos[0] = startPos[0];
+                curPos[0] = startPos[0];
+                if(!(curPos[0]+1 >= 9)){
                     curPos[0]++;
                     ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
                     if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
@@ -368,6 +385,7 @@ public class ChessPiece {
             curPos[0]++;
             ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
             ChessMove newMove;
+            //Checking if the pawn can capture left-side
             if((board.getPiece(new ChessPosition(curPos[0],curPos[1]-1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]-1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
                 if(curPos[0]==8){
                     newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.QUEEN);
@@ -383,6 +401,7 @@ public class ChessPiece {
                     pieceMoves.add(newMove);
                 }
             }
+            //Checking if the pawn can capture right-side
             if((board.getPiece(new ChessPosition(curPos[0],curPos[1]+1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]+1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
                 if(curPos[0]==8){
                     newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.QUEEN);
@@ -564,5 +583,43 @@ public class ChessPiece {
                 pieceMoves.add(newMove);
             }
         }
+    }
+
+    private void directional(String direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
+        final int[] startPos = {myPosition.getRow(),myPosition.getColumn()};
+        int[] curPos = startPos.clone();
+        ChessPosition newPos;
+        do{
+            switch (direction) {
+                case "Up" -> curPos[1]++;
+                case "Down" -> curPos[1]--;
+                case "Left" -> curPos[0]--;
+                case "Right" -> curPos[0]++;
+                case "UpLeft" -> {
+                    curPos[1]++;
+                    curPos[0]--;
+                }
+                case "UpRight" -> {
+                    curPos[1]++;
+                    curPos[0]++;
+                }
+                case "DownLeft" -> {
+                    curPos[1]--;
+                    curPos[0]--;
+                }
+                case "DownRight" -> {
+                    curPos[1]--;
+                    curPos[0]++;
+                }
+            }
+            if((curPos[0]==0)||(curPos[0]==9)||(curPos[1]==0)||(curPos[1]==9)){
+                break;
+            }
+            newPos = new ChessPosition(curPos[0],curPos[1]);
+            if(((board.getPiece(newPos)!=null)&&(board.getPiece(newPos).getTeamColor()==board.getPiece(myPosition).getTeamColor()))){
+                break;
+            }
+            pieceMoves.add(new ChessMove(myPosition,newPos));
+        }while(!((board.getPiece(newPos)!=null)&&(board.getPiece(newPos).getTeamColor()!=board.getPiece(myPosition).getTeamColor())));
     }
 }
