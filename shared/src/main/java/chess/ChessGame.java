@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -67,11 +68,26 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-        //TODO: Find the king team's king and save their position
-        //TODO: Create a piece iterator that will iterate through the board
-
-        //TODO: Cycle through every piece of the opponent and check if one piece's move can override the king's position.
+        ChessPosition kingPos = null;
+        ChessPosition curPos;
+        ArrayList<ChessMove> pieceMoves = new ArrayList<>();
+        for(int i = 1; i < 8; i++){         //Iterating through the rows
+            for(int j = 1; j < 8; j++){     //Iterating through the columns
+                curPos = new ChessPosition(i,j);
+                if((theBoard.getPiece(curPos)!=null)&&(theBoard.getPiece(curPos).getPieceType()==ChessPiece.PieceType.KING)&&(theBoard.getPiece(curPos).getTeamColor())==teamColor){
+                    kingPos = curPos;
+                }
+                if((theBoard.getPiece(curPos)!=null)&&theBoard.getPiece(curPos).getTeamColor()!=teamColor){
+                    pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
+                }
+            }
+        }
+        for(ChessMove pieceMove : pieceMoves){
+            if(pieceMove.getEndPosition().equals(kingPos)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
