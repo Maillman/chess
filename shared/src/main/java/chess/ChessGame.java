@@ -16,6 +16,11 @@ public class ChessGame {
 
     }
 
+    public ChessGame(TeamColor team, ChessBoard board){
+        turn = team;
+        theBoard = board;
+    }
+
     /**
      * @return Which team's turn it is
      */
@@ -48,7 +53,12 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        //TODO: May need to validate moves later...
+        if(theBoard.getPiece(startPosition)!=null) {
+            return theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition);
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -58,7 +68,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        //TODO: Make sure the move is valid.
+        if(validMoves(move.getStartPosition())==null){
+            throw new InvalidMoveException("Invalid Move: No piece found");
+        }
+        //TODO: For now, let's just make the move whether it's valid or not.
+        theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
+        theBoard.addPiece(move.getStartPosition(), null);
+        //Assuming the move is valid, and made. Switch turns.
+        switch (turn) {
+            case WHITE -> setTeamTurn(TeamColor.BLACK);
+            case BLACK -> setTeamTurn(TeamColor.WHITE);
+        }
     }
 
     /**
@@ -97,7 +118,29 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition curPos;
+        isInCheck(teamColor);
+        ArrayList<ChessMove> pieceMoves = new ArrayList<>();
+        for(int i = 1; i < 8; i++){         //Iterating through the rows
+            for(int j = 1; j < 8; j++){     //Iterating through the columns
+                curPos = new ChessPosition(i,j);
+                if((theBoard.getPiece(curPos)!=null)&&theBoard.getPiece(curPos).getTeamColor()==teamColor){
+                    pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
+                }
+            }
+        }
+        for(ChessMove pieceMove : pieceMoves){
+            ChessGame checkGame = new ChessGame(teamColor, theBoard);
+            try {
+                checkGame.makeMove(pieceMove);
+            }catch(InvalidMoveException ime){
+                System.out.println("Invalid Move?");
+            }
+            if(!checkGame.isInCheck(teamColor)){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
