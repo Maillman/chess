@@ -75,7 +75,6 @@ public class ChessGame {
         if(theBoard.getPiece(move.getStartPosition()).getTeamColor()!=turn){
             throw new InvalidMoveException("Invalid Move: Piece move out of order!");
         }
-        //ChessGame checkGame = this.clone();
         ChessGame checkGame = new ChessGame(turn, theBoard);
         checkGame.getBoard().addPiece(move.getEndPosition(), checkGame.getBoard().getPiece(move.getStartPosition()));
         checkGame.getBoard().addPiece(move.getStartPosition(), null);
@@ -83,7 +82,11 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move: In check!");
         }
         //Makes the move.
-        theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
+        if(move.getPromotionPiece()!=null){
+            theBoard.addPiece(move.getEndPosition(), new ChessPiece(turn,move.getPromotionPiece()));
+        }else {
+            theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
+        }
         theBoard.addPiece(move.getStartPosition(), null);
         //Assuming the move is valid, and made. Switch turns.
         switch (turn) {
@@ -102,8 +105,8 @@ public class ChessGame {
         ChessPosition kingPos = null;
         ChessPosition curPos;
         ArrayList<ChessMove> pieceMoves = new ArrayList<>();
-        for(int i = 1; i < 8; i++){         //Iterating through the rows
-            for(int j = 1; j < 8; j++){     //Iterating through the columns
+        for(int i = 1; i <= 8; i++){         //Iterating through the rows
+            for(int j = 1; j <= 8; j++){     //Iterating through the columns
                 curPos = new ChessPosition(i,j);
                 if((theBoard.getPiece(curPos)!=null)&&(theBoard.getPiece(curPos).getPieceType()==ChessPiece.PieceType.KING)&&(theBoard.getPiece(curPos).getTeamColor())==teamColor){
                     kingPos = curPos;
@@ -131,8 +134,8 @@ public class ChessGame {
         ChessPosition curPos;
         isInCheck(teamColor);
         ArrayList<ChessMove> pieceMoves = new ArrayList<>();
-        for(int i = 1; i < 8; i++){         //Iterating through the rows
-            for(int j = 1; j < 8; j++){     //Iterating through the columns
+        for(int i = 1; i <= 8; i++){         //Iterating through the rows
+            for(int j = 1; j <= 8; j++){     //Iterating through the columns
                 curPos = new ChessPosition(i,j);
                 if((theBoard.getPiece(curPos)!=null)&&theBoard.getPiece(curPos).getTeamColor()==teamColor){
                     pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
