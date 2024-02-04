@@ -33,6 +33,14 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard board){
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                squares[i][j] = board.squares[i][j];
+            }
+        }
+        //squares = board.squares.clone();
+    }
     /**
      * Adds a chess piece to the chessboard
      *

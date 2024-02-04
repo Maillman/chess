@@ -18,9 +18,8 @@ public class ChessGame {
 
     public ChessGame(TeamColor team, ChessBoard board){
         turn = team;
-        theBoard = board;
+        theBoard = new ChessBoard(board);
     }
-
     /**
      * @return Which team's turn it is
      */
@@ -68,11 +67,22 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        //TODO: Make sure the move is valid.
-        if(validMoves(move.getStartPosition())==null){
-            throw new InvalidMoveException("Invalid Move: No piece found");
+        ArrayList<ChessMove> validMoves = new ArrayList<>(validMoves(move.getStartPosition()));
+        System.out.println("Moving" + theBoard.getPiece(move.getStartPosition()).toString() + move.toString());
+        if(!validMoves.contains(move)){
+            throw new InvalidMoveException("Invalid Move: Piece can't go there!");
         }
-        //TODO: For now, let's just make the move whether it's valid or not.
+        if(theBoard.getPiece(move.getStartPosition()).getTeamColor()!=turn){
+            throw new InvalidMoveException("Invalid Move: Piece move out of order!");
+        }
+        //ChessGame checkGame = this.clone();
+        ChessGame checkGame = new ChessGame(turn, theBoard);
+        checkGame.getBoard().addPiece(move.getEndPosition(), checkGame.getBoard().getPiece(move.getStartPosition()));
+        checkGame.getBoard().addPiece(move.getStartPosition(), null);
+        if(checkGame.isInCheck(turn)){
+            throw new InvalidMoveException("Invalid Move: In check!");
+        }
+        //Makes the move.
         theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         theBoard.addPiece(move.getStartPosition(), null);
         //Assuming the move is valid, and made. Switch turns.
