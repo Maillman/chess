@@ -54,7 +54,17 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         //TODO: May need to validate moves later...
         if(theBoard.getPiece(startPosition)!=null) {
-            return theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition);
+            ArrayList<ChessMove> moves = new ArrayList<>(theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition));
+            ArrayList<ChessMove> validMoves = new ArrayList<>();
+            for(ChessMove pieceMove : moves){
+                ChessGame checkGame = new ChessGame(theBoard.getPiece(startPosition).getTeamColor(), theBoard);
+                checkGame.getBoard().addPiece(pieceMove.getEndPosition(), checkGame.getBoard().getPiece(pieceMove.getStartPosition()));
+                checkGame.getBoard().addPiece(pieceMove.getStartPosition(), null);
+                if(!checkGame.isInCheck(theBoard.getPiece(startPosition).getTeamColor())){
+                    validMoves.add(pieceMove);
+                }
+            }
+            return validMoves;
         }else{
             return null;
         }
@@ -68,7 +78,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ArrayList<ChessMove> validMoves = new ArrayList<>(validMoves(move.getStartPosition()));
-        System.out.println("Moving" + theBoard.getPiece(move.getStartPosition()).toString() + move.toString());
+        //System.out.println("Moving" + theBoard.getPiece(move.getStartPosition()).toString() + move.toString());
         if(!validMoves.contains(move)){
             throw new InvalidMoveException("Invalid Move: Piece can't go there!");
         }
@@ -147,7 +157,7 @@ public class ChessGame {
                 try {
                     checkGame.makeMove(pieceMove);
                 } catch (InvalidMoveException ime) {
-                    System.out.println("Invalid Move?");
+                    System.out.println("Invalid Move");
                 }
                 if (!checkGame.isInCheck(teamColor)) {
                     return false;
@@ -183,7 +193,7 @@ public class ChessGame {
             try {
                 checkGame.makeMove(pieceMove);
             }catch(InvalidMoveException ime){
-                System.out.println("Invalid Move?");
+                System.out.println("Invalid Move");
             }
             checkGame.getBoard().addPiece(pieceMove.getEndPosition(), checkGame.getBoard().getPiece(pieceMove.getStartPosition()));
             checkGame.getBoard().addPiece(pieceMove.getStartPosition(), null);
