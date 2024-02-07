@@ -12,6 +12,10 @@ import java.util.Collection;
 public class ChessGame {
     TeamColor turn;
     ChessBoard theBoard;
+    ChessBoard prevBoard;
+    boolean castleQueenSideW = true, castleKingSideW = true;
+    boolean castleQueenSideB = true, castleKingSideB = true;
+    boolean makeQueenSide = false; boolean makeKingSide = false;
     public ChessGame() {
 
     }
@@ -52,10 +56,43 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        //TODO: May need to validate moves later...
         if(theBoard.getPiece(startPosition)!=null) {
             ArrayList<ChessMove> moves = new ArrayList<>(theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition));
             ArrayList<ChessMove> validMoves = new ArrayList<>();
+            //Adding castling ability
+            if(theBoard.getPiece(startPosition).getPieceType()==ChessPiece.PieceType.KING) {
+                ChessPosition rookPos;
+                ChessPosition kingSide = new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 1);
+                ChessPosition queenSide = new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 1);
+                if (turn != null) {
+                    switch (turn) {
+                        case WHITE -> {
+                            //Castling KingSide
+                            rookPos = new ChessPosition(startPosition.getRow(), 8);
+                            if ((validMoves(rookPos).contains(new ChessMove(rookPos, kingSide))) && (castleKingSideW)) {
+                                validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 2)));
+                            }
+                            //Castling QueenSide
+                            rookPos = new ChessPosition(startPosition.getRow(), 1);
+                            if ((validMoves(rookPos).contains(new ChessMove(rookPos, queenSide))) && (castleQueenSideW)) {
+                                validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 2)));
+                            }
+                        }
+                        case BLACK -> {
+                            //Castling KingSide
+                            rookPos = new ChessPosition(startPosition.getRow(), 8);
+                            if ((validMoves(rookPos).contains(new ChessMove(rookPos, kingSide))) && (castleKingSideB)) {
+                                validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 2)));
+                            }
+                            //Castling QueenSide
+                            rookPos = new ChessPosition(startPosition.getRow(), 1);
+                            if ((validMoves(rookPos).contains(new ChessMove(rookPos, queenSide))) && (castleQueenSideB)) {
+                                validMoves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 2)));
+                            }
+                        }
+                    }
+                }
+            }
             for(ChessMove pieceMove : moves){
                 ChessGame checkGame = new ChessGame(theBoard.getPiece(startPosition).getTeamColor(), theBoard);
                 checkGame.getBoard().addPiece(pieceMove.getEndPosition(), checkGame.getBoard().getPiece(pieceMove.getStartPosition()));
@@ -77,6 +114,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessGame preGame = new ChessGame(turn, theBoard);
         ArrayList<ChessMove> validMoves = new ArrayList<>(validMoves(move.getStartPosition()));
         //System.out.println("Moving" + theBoard.getPiece(move.getStartPosition()).toString() + move.toString());
         if(!validMoves.contains(move)){
@@ -98,6 +136,33 @@ public class ChessGame {
             theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         }
         theBoard.addPiece(move.getStartPosition(), null);
+        //Placing Castling Move
+        if((preGame.getBoard().getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()== ChessPiece.PieceType.KING)&&((move.getEndPosition().getColumn()-move.getStartPosition().getColumn()==2))){
+            theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+1),new ChessPiece(turn, ChessPiece.PieceType.ROOK));
+            theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),8),null);
+        }else if((preGame.getBoard().getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()== ChessPiece.PieceType.KING)&&((move.getEndPosition().getColumn()-move.getStartPosition().getColumn()==-2))){
+            theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-1),new ChessPiece(turn, ChessPiece.PieceType.ROOK));
+            theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),1),null);
+        }
+        //Checking for castling
+        switch (turn) {
+            case WHITE -> {
+                if(((theBoard.getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.KING))&&((theBoard.getPiece(new ChessPosition(1,8))!=null)&&(theBoard.getPiece(new ChessPosition(1,8)).getPieceType()==ChessPiece.PieceType.ROOK))){
+                    castleKingSideW = false;
+                }
+                if(((theBoard.getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.KING))&&((theBoard.getPiece(new ChessPosition(1,1))!=null)&&(theBoard.getPiece(new ChessPosition(1,1)).getPieceType()==ChessPiece.PieceType.ROOK))){
+                    castleQueenSideW = false;
+                }
+            }
+            case BLACK -> {
+                if((theBoard.getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.KING)&&(theBoard.getPiece(new ChessPosition(1,8))!=null)&&(theBoard.getPiece(new ChessPosition(8,8)).getPieceType()== ChessPiece.PieceType.ROOK)){
+                    castleKingSideB = false;
+                }
+                if((theBoard.getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.KING)&&(theBoard.getPiece(new ChessPosition(1,8))!=null)&&(theBoard.getPiece(new ChessPosition(8,1)).getPieceType()== ChessPiece.PieceType.ROOK)){
+                    castleQueenSideB = false;
+                }
+            }
+        }
         //Assuming the move is valid, and made. Switch turns.
         switch (turn) {
             case WHITE -> setTeamTurn(TeamColor.BLACK);
