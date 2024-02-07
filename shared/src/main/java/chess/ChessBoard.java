@@ -29,6 +29,41 @@ public class ChessBoard {
     }
 
     private ChessPiece[][] squares = new ChessPiece[8][8];
+
+    public boolean isCastleQueenSideW() {
+        return castleQueenSideW;
+    }
+
+    public void setCastleQueenSideW(boolean castleQueenSideW) {
+        this.castleQueenSideW = castleQueenSideW;
+    }
+
+    public boolean isCastleKingSideW() {
+        return castleKingSideW;
+    }
+
+    public void setCastleKingSideW(boolean castleKingSideW) {
+        this.castleKingSideW = castleKingSideW;
+    }
+
+    public boolean isCastleQueenSideB() {
+        return castleQueenSideB;
+    }
+
+    public void setCastleQueenSideB(boolean castleQueenSideB) {
+        this.castleQueenSideB = castleQueenSideB;
+    }
+
+    public boolean isCastleKingSideB() {
+        return castleKingSideB;
+    }
+
+    public void setCastleKingSideB(boolean castleKingSideB) {
+        this.castleKingSideB = castleKingSideB;
+    }
+
+    boolean castleQueenSideW = true, castleKingSideW = true;
+    boolean castleQueenSideB = true, castleKingSideB = true;
     public ChessBoard() {
         
     }
@@ -97,5 +132,11 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             squares[rank][i] = new ChessPiece(Color, ChessPiece.PieceType.PAWN);
         }
+        castleKingSideW = true;
+        castleQueenSideW = true;
+        castleKingSideB = true;
+        castleQueenSideB = true;
+
     }
+
 }
