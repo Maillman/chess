@@ -6,9 +6,14 @@ import dataAccess.DataAccess;
 import service.UserService;
 import spark.*;
 
+import javax.xml.crypto.Data;
+
 public class Server {
     private final UserService userService;
-
+    public Server(){
+        final DataAccess defdataAccess = null;
+        userService = new UserService(defdataAccess);
+    }
     public Server(DataAccess dataAccess) {
         userService = new UserService(dataAccess);
     }
