@@ -89,7 +89,7 @@ public class StandardAPITests {
 
     @Test
     @Order(2)
-    @DisplayName("Normal User Login")
+    @DisplayName("Normal Model.User Login")
     public void successLogin() throws TestException {
         TestModels.TestLoginRequest loginRequest = new TestModels.TestLoginRequest();
         loginRequest.username = existingUser.username;
@@ -110,7 +110,7 @@ public class StandardAPITests {
 
     @Test
     @Order(3)
-    @DisplayName("Login Invalid User")
+    @DisplayName("Login Invalid Model.User")
     public void loginInvalidUser() throws TestException {
         TestModels.TestLoginRequest loginRequest = new TestModels.TestLoginRequest();
         loginRequest.username = newUser.username;
@@ -213,7 +213,7 @@ public class StandardAPITests {
 
     @Test
     @Order(6)
-    @DisplayName("Normal User Registration")
+    @DisplayName("Normal Model.User Registration")
     public void successRegister() throws TestException {
         TestModels.TestRegisterRequest registerRequest = new TestModels.TestRegisterRequest();
         registerRequest.username = newUser.username;
@@ -236,7 +236,7 @@ public class StandardAPITests {
 
     @Test
     @Order(7)
-    @DisplayName("Re-Register User")
+    @DisplayName("Re-Register Model.User")
     public void registerTwice() throws TestException {
         //create request trying to register existing user
         TestModels.TestRegisterRequest registerRequest = new TestModels.TestRegisterRequest();
