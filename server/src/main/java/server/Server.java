@@ -38,7 +38,7 @@ public class Server {
 
     private Object handleRequest(Request req, Response res) {
         var user = new Gson().fromJson(req.body(), User.class);
-        user = userService.registerUser(user);
-        return new Gson().toJson(user);
+        var auth = userService.registerUser(user);
+        return new Gson().toJson(auth);
     }
 }
