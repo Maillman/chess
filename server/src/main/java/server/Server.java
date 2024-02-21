@@ -1,8 +1,10 @@
 package server;
 
 import Model.User;
+import Model.Auth;
 import com.google.gson.Gson;
 import dataAccess.DataAccess;
+import service.ClearService;
 import service.UserService;
 import spark.*;
 
@@ -10,12 +12,15 @@ import javax.xml.crypto.Data;
 
 public class Server {
     private final UserService userService;
+    private final ClearService clearService;
     public Server(){
-        final DataAccess defdataAccess = null;
-        userService = new UserService(defdataAccess);
+        final DataAccess dataAccess = null;
+        userService = new UserService(dataAccess);
+        clearService = new ClearService(dataAccess);
     }
     public Server(DataAccess dataAccess) {
         userService = new UserService(dataAccess);
+        clearService = new ClearService(dataAccess);
     }
 
     public int run(int desiredPort) {
@@ -26,7 +31,9 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.get("/", (req, res) -> "Hello, Chess Server!");
         //TODO: Start here!!!
-        Spark.post("/user", this::handleRequest);
+        Spark.delete("/db", this::clear);
+        Spark.post("/user", this::register);
+        Spark.delete("/session", this::logout);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -35,10 +42,18 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-
-    private Object handleRequest(Request req, Response res) {
+    private Object clear(Request req, Response res) {
+        clearService.clear();
+        return "{}";
+    }
+    private Object register(Request req, Response res) {
         var user = new Gson().fromJson(req.body(), User.class);
         var auth = userService.registerUser(user);
         return new Gson().toJson(auth);
+    }
+
+    private Object logout(Request req, Response res) {
+        userService.logout(req.headers("authorization"));
+        return "{}";
     }
 }

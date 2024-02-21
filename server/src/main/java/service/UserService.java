@@ -4,7 +4,6 @@ import Model.Auth;
 import Model.User;
 import dataAccess.DataAccess;
 
-import java.util.UUID;
 
 public class UserService {
     private final DataAccess dataAccess;
@@ -19,5 +18,11 @@ public class UserService {
             auth = dataAccess.createAuth(username);
         }
         return auth;
+    }
+
+    public void logout(String authToken) {
+        if(dataAccess.getAuth(authToken)!=null){
+            dataAccess.deleteAuth(authToken);
+        }
     }
 }

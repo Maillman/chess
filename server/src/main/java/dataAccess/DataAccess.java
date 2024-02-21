@@ -7,4 +7,10 @@ public interface DataAccess {
 
     void createUser(User user);
     Auth createAuth(String username);
+
+    Auth getAuth(String authToken);
+
+    void deleteAuth(String authToken);
+
+    void clear();
 }
