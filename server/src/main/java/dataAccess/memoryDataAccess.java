@@ -5,6 +5,7 @@ import Model.Game;
 import Model.User;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class memoryDataAccess implements DataAccess {
@@ -47,4 +48,15 @@ public class memoryDataAccess implements DataAccess {
         games.clear();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof memoryDataAccess that)) return false;
+        return Objects.equals(users, that.users) && Objects.equals(auths, that.auths) && Objects.equals(games, that.games);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(users, auths, games);
+    }
 }

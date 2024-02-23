@@ -4,17 +4,20 @@ import Model.User;
 import Model.Auth;
 import com.google.gson.Gson;
 import dataAccess.DataAccess;
+import dataAccess.DataAccessException;
+import dataAccess.memoryDataAccess;
 import service.ClearService;
 import service.UserService;
 import spark.*;
 
 import javax.xml.crypto.Data;
+import java.awt.image.DataBuffer;
 
 public class Server {
     private final UserService userService;
     private final ClearService clearService;
     public Server(){
-        final DataAccess dataAccess = null;
+        DataAccess dataAccess = new memoryDataAccess();
         userService = new UserService(dataAccess);
         clearService = new ClearService(dataAccess);
     }
@@ -47,9 +50,15 @@ public class Server {
         return "{}";
     }
     private Object register(Request req, Response res) {
-        var user = new Gson().fromJson(req.body(), User.class);
-        var auth = userService.registerUser(user);
-        return new Gson().toJson(auth);
+        try {
+            var user = new Gson().fromJson(req.body(), User.class);
+            var auth = userService.registerUser(user);
+            return new Gson().toJson(auth);
+        }
+        catch(DataAccessException e) {
+            res.status(403);
+            return "{ \"message\": \"Error: already taken\" }";
+        }
     }
 
     private Object logout(Request req, Response res) {

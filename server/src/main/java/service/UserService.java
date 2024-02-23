@@ -3,6 +3,7 @@ package service;
 import Model.Auth;
 import Model.User;
 import dataAccess.DataAccess;
+import dataAccess.DataAccessException;
 
 
 public class UserService {
@@ -10,14 +11,14 @@ public class UserService {
     public UserService(DataAccess dataAccess){
         this.dataAccess = dataAccess;
     }
-    public Auth registerUser(User user) {
-        Auth auth = null;
+    public Auth registerUser(User user) throws DataAccessException {
         String username = user.getUsername();
         if(dataAccess.getUser(username)==null){
             dataAccess.createUser(user);
-            auth = dataAccess.createAuth(username);
+            return dataAccess.createAuth(username);
+        }else {
+            throw new DataAccessException("Username already taken!");
         }
-        return auth;
     }
 
     public void logout(String authToken) {
