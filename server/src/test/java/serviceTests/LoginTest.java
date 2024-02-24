@@ -12,7 +12,7 @@ import passoffTests.testClasses.TestModels;
 import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class RegisterTest {
+public class LoginTest {
     private static User existingUser;
 
     private static User newUser;
@@ -20,7 +20,7 @@ public class RegisterTest {
     private static TestModels.TestCreateRequest createRequest;
     private static DataAccess testDatabase;
     private static DataAccess actualDatabase;
-    private static UserService register;
+    private static UserService login;
     @BeforeAll
     public static void init() throws TestException {
         //MemoryDatabase
@@ -35,35 +35,27 @@ public class RegisterTest {
         actualDatabase.clear();
         actualDatabase.createUser(existingUser);
         testDatabase.createUser(existingUser);
-        register = new UserService(testDatabase);
+        login = new UserService(testDatabase);
     }
+
     @Test
     @Order(1)
-    @DisplayName("Register User Test")
-    public void registerUser() throws TestException, DataAccessException {
-        //register test
-        Auth authToken = register.registerUser(newUser);
-        actualDatabase.createUser(newUser);
-        //check if the user has been registered
+    @DisplayName("Login Existing User Test!")
+    public void loginUser() throws TestException, DataAccessException {
+        //login test
+        Auth authToken = login.login(existingUser);
+        //check if the user has been logged-in
         //user is in the /user database
-        Assertions.assertEquals(actualDatabase.getUser(newUser.getUsername()),testDatabase.getUser(newUser.getUsername()),"User not register in database.");
+        Assertions.assertEquals(actualDatabase.getUser(existingUser.getUsername()),testDatabase.getUser(existingUser.getUsername()),"User not register in database.");
         //authToken is in the /auth database
         Assertions.assertEquals(authToken, testDatabase.getAuth(authToken.getAuthToken()), "authToken not registered in database.");
     }
 
     @Test
     @Order(2)
-    @DisplayName("Register More than Once Test")
-    public void registerTwice() throws TestException, DataAccessException {
-        //register test
-        Auth authToken = register.registerUser(newUser);
-        actualDatabase.createUser(newUser);
-        //check if the user has been registered
-        //user is in the /user database
-        Assertions.assertEquals(actualDatabase.getUser(newUser.getUsername()),testDatabase.getUser(newUser.getUsername()),"User not register in database.");
-        //authToken is in the /auth database
-        Assertions.assertEquals(authToken, testDatabase.getAuth(authToken.getAuthToken()), "authToken not registered in database.");
-        //attempt to register again
-        Assertions.assertThrows(DataAccessException.class, () -> register.registerUser(newUser),"Register not throwing exception!");
+    @DisplayName("Login New User Test!")
+    public void loginNewUser() throws TestException {
+        //attempt to log-in existing user
+        Assertions.assertThrows(DataAccessException.class, () -> login.login(newUser),"Login not throwing exception!");
     }
 }

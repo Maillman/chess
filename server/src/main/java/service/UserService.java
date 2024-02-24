@@ -5,6 +5,8 @@ import Model.User;
 import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
 
+import java.util.Objects;
+
 
 public class UserService {
     private final DataAccess dataAccess;
@@ -18,6 +20,16 @@ public class UserService {
             return dataAccess.createAuth(username);
         }else {
             throw new DataAccessException("Username already taken!");
+        }
+    }
+
+    public Auth login(User user) throws DataAccessException {
+        String username = user.getUsername();
+        User getUser = dataAccess.getUser(username);
+        if((getUser!=null)&&(Objects.equals(user.getPassword(), getUser.getPassword()))){
+            return dataAccess.createAuth(username);
+        }else {
+            throw new DataAccessException("Unauthorized!");
         }
     }
 

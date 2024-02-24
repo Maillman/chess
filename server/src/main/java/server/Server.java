@@ -36,6 +36,7 @@ public class Server {
         //TODO: Start here!!!
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.awaitInitialization();
         return Spark.port();
@@ -58,6 +59,17 @@ public class Server {
         catch(DataAccessException e) {
             res.status(403);
             return "{ \"message\": \"Error: already taken\" }";
+        }
+    }
+
+    private Object login(Request req, Response res) {
+        try {
+            var user = new Gson().fromJson(req.body(), User.class);
+            var auth = userService.login(user);
+            return new Gson().toJson(auth);
+        }catch(DataAccessException e) {
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
     }
 
