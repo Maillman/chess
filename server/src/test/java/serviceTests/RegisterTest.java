@@ -12,31 +12,10 @@ import passoffTests.testClasses.TestModels;
 import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class RegisterTest {
-    private static User existingUser;
+@SuppressWarnings("unused")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class RegisterTest extends BaseTest {
 
-    private static User newUser;
-
-    private static TestModels.TestCreateRequest createRequest;
-    private static DataAccess testDatabase;
-    private static DataAccess actualDatabase;
-    private static UserService register;
-    @BeforeAll
-    public static void init() throws TestException {
-        //MemoryDatabase
-        testDatabase = new memoryDataAccess();
-        actualDatabase = new memoryDataAccess();
-        existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
-        newUser = new User("newUser","newPassword","new@Email.com");
-    }
-    @BeforeEach
-    public void setUp() throws TestException {
-        testDatabase.clear();
-        actualDatabase.clear();
-        actualDatabase.createUser(existingUser);
-        testDatabase.createUser(existingUser);
-        register = new UserService(testDatabase);
-    }
     @Test
     @Order(1)
     @DisplayName("Register User Test")

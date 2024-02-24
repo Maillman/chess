@@ -12,31 +12,9 @@ import passoffTests.testClasses.TestModels;
 import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class LoginTest {
-    private static User existingUser;
-
-    private static User newUser;
-
-    private static TestModels.TestCreateRequest createRequest;
-    private static DataAccess testDatabase;
-    private static DataAccess actualDatabase;
-    private static UserService login;
-    @BeforeAll
-    public static void init() throws TestException {
-        //MemoryDatabase
-        testDatabase = new memoryDataAccess();
-        actualDatabase = new memoryDataAccess();
-        existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
-        newUser = new User("newUser","newPassword","new@Email.com");
-    }
-    @BeforeEach
-    public void setUp() throws TestException {
-        testDatabase.clear();
-        actualDatabase.clear();
-        actualDatabase.createUser(existingUser);
-        testDatabase.createUser(existingUser);
-        login = new UserService(testDatabase);
-    }
+@SuppressWarnings("unused")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class LoginTest extends BaseTest {
 
     @Test
     @Order(1)

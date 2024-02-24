@@ -14,30 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("unused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ClearTest {
-    private static User existingUser;
-
-    private static User newUser;
-
-    private static TestModels.TestCreateRequest createRequest;
-    private static DataAccess testDatabase;
-    private static DataAccess actualDatabase;
-    @BeforeAll
-    public static void init() throws TestException {
-        //MemoryDatabase
-        testDatabase = new memoryDataAccess();
-        actualDatabase = new memoryDataAccess();
-    }
+public class ClearTest extends BaseTest {
     @BeforeEach
-    public void setUp() throws TestException {
-        testDatabase.clear();
+    public void setup() throws TestException {
         actualDatabase.clear();
     }
     @Test
     @Order(1)
     @DisplayName("Clear Service Test")
     public void clearData() throws TestException {
-        ClearService clear = new ClearService(testDatabase);
         //create filler users
         newUser = new User("newUser","newPassword","new@Email.com");
         testDatabase.createUser(newUser);

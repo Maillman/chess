@@ -3,12 +3,15 @@ package dataAccess;
 import Model.Auth;
 import Model.Game;
 import Model.User;
+import chess.ChessGame;
 
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
-
+//TODO: Refactor this into several memory DAOs, shouldn't be too hard. Just cut and paste
+//TODO: the code into the userDAO, authDAO, and gameDAO. REMEMBER: Single Responsibility!
 public class memoryDataAccess implements DataAccess {
+    private int gameID = 1;
     final private HashMap<String, User> users = new HashMap<>();
     final private HashMap<String, Auth> auths = new HashMap<>();
     final private HashMap<Integer, Game> games = new HashMap<>();
@@ -39,6 +42,13 @@ public class memoryDataAccess implements DataAccess {
     @Override
     public void deleteAuth(String authToken) {
         auths.remove(authToken);
+    }
+
+    @Override
+    public Game createGame(Game game){
+        Game createGame = new Game(gameID++,"","",game.getGameName(), new ChessGame());
+        games.put(gameID,createGame);
+        return createGame;
     }
 
     @Override
