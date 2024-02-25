@@ -5,13 +5,12 @@ import Model.Game;
 import Model.User;
 import chess.ChessGame;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+
 //TODO: Refactor this into several memory DAOs, shouldn't be too hard. Just cut and paste
 //TODO: the code into the userDAO, authDAO, and gameDAO. REMEMBER: Single Responsibility!
 public class memoryDataAccess implements DataAccess {
-    private int gameID = 1;
+    private int gameID = 0;
     final private HashMap<String, User> users = new HashMap<>();
     final private HashMap<String, Auth> auths = new HashMap<>();
     final private HashMap<Integer, Game> games = new HashMap<>();
@@ -27,8 +26,7 @@ public class memoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Auth createAuth(String username) {
-        String authToken = UUID.randomUUID().toString();
+    public Auth createAuth(String authToken, String username) {
         Auth auth = new Auth(authToken,username);
         auths.put(authToken, auth);
         return auth;
@@ -43,10 +41,23 @@ public class memoryDataAccess implements DataAccess {
     public void deleteAuth(String authToken) {
         auths.remove(authToken);
     }
+    @Override
+    public List<Game> listGames(){
+        List<Game> listGames = new ArrayList<>();
+        for(int i = 1; i <= gameID; i++){
+            listGames.add(games.get(i));
+        }
+        return listGames;
+    }
+    @Override
+    public Game getGame(int gameID){
+        return games.get(gameID);
+    }
 
     @Override
     public Game createGame(Game game){
-        Game createGame = new Game(gameID++,"","",game.getGameName(), new ChessGame());
+        gameID++;
+        Game createGame = new Game(gameID,game.getWhiteUsername(), game.getBlackUsername(), game.getGameName(), game.getGame());
         games.put(gameID,createGame);
         return createGame;
     }
@@ -56,6 +67,16 @@ public class memoryDataAccess implements DataAccess {
         users.clear();
         auths.clear();
         games.clear();
+    }
+
+    @Override
+    public String toString() {
+        return "memoryDataAccess{" +
+                "gameID=" + gameID +
+                ", users=" + users +
+                ", auths=" + auths +
+                ", games=" + games +
+                '}';
     }
 
     @Override

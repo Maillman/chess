@@ -2,6 +2,8 @@ package Model;
 
 import chess.ChessGame;
 
+import java.util.Objects;
+
 public class Game{
     private final Integer gameID;
     private final String whiteUsername;
@@ -35,5 +37,17 @@ public class Game{
 
     public ChessGame getGame() {
         return game;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Game game1)) return false;
+        return Objects.equals(getGameID(), game1.getGameID()) && Objects.equals(getWhiteUsername(), game1.getWhiteUsername()) && Objects.equals(getBlackUsername(), game1.getBlackUsername()) && Objects.equals(getGameName(), game1.getGameName()) && Objects.equals(getGame(), game1.getGame());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getGameID(), getWhiteUsername(), getBlackUsername(), getGameName(), getGame());
     }
 }

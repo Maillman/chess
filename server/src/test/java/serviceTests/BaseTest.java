@@ -1,5 +1,6 @@
 package serviceTests;
 
+import Model.Game;
 import Model.User;
 import dataAccess.DataAccess;
 import dataAccess.memoryDataAccess;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import passoffTests.testClasses.TestException;
 import passoffTests.testClasses.TestModels;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 
 public abstract class BaseTest {
@@ -20,6 +22,7 @@ public abstract class BaseTest {
     protected static DataAccess actualDatabase;
     protected static UserService register;
     protected static UserService login;
+    protected static GameService create;
     protected static ClearService clear;
     @BeforeAll
     public static void init() throws TestException {
@@ -37,6 +40,7 @@ public abstract class BaseTest {
         testDatabase.createUser(existingUser);
         register = new UserService(testDatabase);
         login = new UserService(testDatabase);
+        create = new GameService(testDatabase);
         clear = new ClearService(testDatabase);
     }
 }

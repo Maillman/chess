@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Objects;
+
 public class User{
     private final String username;
     private final String password;
@@ -21,5 +23,17 @@ public class User{
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername(), getPassword(), getEmail());
     }
 }
