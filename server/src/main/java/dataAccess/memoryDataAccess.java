@@ -3,7 +3,6 @@ package dataAccess;
 import Model.Auth;
 import Model.Game;
 import Model.User;
-import chess.ChessGame;
 
 import java.util.*;
 
@@ -61,13 +60,27 @@ public class memoryDataAccess implements DataAccess {
         games.put(gameID,createGame);
         return createGame;
     }
+    @Override
+    public Game updateGame(String username, Integer gameID, String playerColor, Game upGame) {
+        Game newGame = games.get(gameID);
+        switch (playerColor) {
+            case "White" -> newGame = new Game(gameID,username,newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
+            case "Black" -> newGame = new Game(gameID,newGame.getWhiteUsername(),username, newGame.getGameName(), upGame.getGame());
+            default -> newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
+        }
+        games.remove(gameID);
+        games.put(gameID,newGame);
+        return newGame;
+    }
 
     @Override
     public void clear() {
+        gameID = 0;
         users.clear();
         auths.clear();
         games.clear();
     }
+
 
     @Override
     public String toString() {

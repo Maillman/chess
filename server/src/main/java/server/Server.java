@@ -87,7 +87,11 @@ public class Server {
     private Object list(Request req, Response res){
         try{
             var listGames = gameService.listGames(req.headers("authorization"));
-            return new Gson().toJson(listGames);
+            if(!listGames.isEmpty()) {
+                return new Gson().toJson(listGames);
+            }else{
+                return "{}";
+            }
         }catch(DataAccessException e){
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";

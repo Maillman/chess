@@ -22,4 +22,6 @@ public interface DataAccess {
     Game createGame(Game game);
 
     void clear();
+
+    Game updateGame(String username, Integer gameID, String playerColor, Game upGame);
 }
