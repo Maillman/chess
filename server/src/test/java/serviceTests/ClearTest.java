@@ -1,23 +1,17 @@
 package serviceTests;
 
-import Model.Auth;
 import Model.User;
-import chess.ChessGame;
-import dataAccess.DataAccess;
-import dataAccess.memoryDataAccess;
 import org.junit.jupiter.api.*;
 import passoffTests.testClasses.TestException;
-import passoffTests.testClasses.TestModels;
-import service.ClearService;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("unused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ClearTest extends BaseTest {
     @BeforeEach
     public void setup() throws TestException {
-        actualDatabase.clear();
+        actualUserDAO.clear();
+        actualAuthDAO.clear();
+        actualGameDAO.clear();
     }
     @Test
     @Order(1)
@@ -25,19 +19,19 @@ public class ClearTest extends BaseTest {
     public void clearData() throws TestException {
         //create filler users
         newUser = new User("newUser","newPassword","new@Email.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         newUser = new User("Maillman","MyBelovedPearl","WhitakerFamily@TheWorld.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         newUser = new User("PhoenixFke","MyBelovedPearl","WhitakerFamily@TheWorld.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         newUser = new User("Phoenix_Gamer","...21FDS-=_game","Leverage@TheWorld.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         //check if the database is filled
-        Assertions.assertNotEquals(actualDatabase, testDatabase, "The database did not get filled");
+        Assertions.assertNotEquals(actualUserDAO, testUserDAO, "The user database did not get filled");
         //clear the database
         clear.clear();
         //check if the database cleared
-        Assertions.assertEquals(actualDatabase,testDatabase,"The database did not clear!");
+        Assertions.assertEquals(actualUserDAO,testUserDAO,"The user database did not clear!");
     }
 
     @Test
@@ -45,21 +39,20 @@ public class ClearTest extends BaseTest {
     @DisplayName("Multiple Clears")
     public void clearManyData() throws TestException {
         //clear an empty database
-        ClearService clear = new ClearService(testDatabase);
         clear.clear();
         //create filler users
         newUser = new User("newUser","newPassword","new@Email.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         newUser = new User("Maillman","MyBelovedPearl","WhitakerFamily@TheWorld.com");
-        testDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
         //clear the database
         clear.clear();
-        Assertions.assertEquals(actualDatabase,testDatabase,"The database did not clear!");
+        Assertions.assertEquals(actualUserDAO,testUserDAO,"The user database did not clear!");
         //create more filler users
         newUser = new User("Phoenix_Gamer","...21FDS-=_game","Leverage@TheWorld.com");
-        testDatabase.createUser(newUser);
-        actualDatabase.createUser(newUser);
+        testUserDAO.createUser(newUser);
+        actualUserDAO.createUser(newUser);
         //check if the database is filled correctly post-clear
-        Assertions.assertEquals(actualDatabase,testDatabase,"The database did not clear correctly!");
+        Assertions.assertEquals(actualUserDAO, testUserDAO, "The user database did not get filled");
     }
 }

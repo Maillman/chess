@@ -2,9 +2,7 @@ package server;
 
 import Model.*;
 import com.google.gson.Gson;
-import dataAccess.DataAccess;
-import dataAccess.DataAccessException;
-import dataAccess.memoryDataAccess;
+import dataAccess.*;
 import service.ClearService;
 import service.UserService;
 import service.GameService;
@@ -18,15 +16,23 @@ public class Server {
     private final ClearService clearService;
     private final GameService gameService;
     public Server(){
+        UserDAO userDAO = new memoryUserDAO();
+        AuthDAO authDAO = new memoryAuthDAO();
+        GameDAO gameDAO = new memoryGameDAO();
+        userService = new UserService(userDAO, authDAO);
+        clearService = new ClearService(userDAO, authDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
+        /*
         DataAccess dataAccess = new memoryDataAccess();
         userService = new UserService(dataAccess);
         clearService = new ClearService(dataAccess);
         gameService = new GameService(dataAccess);
+         */
     }
-    public Server(DataAccess dataAccess) {
-        userService = new UserService(dataAccess);
-        clearService = new ClearService(dataAccess);
-        gameService = new GameService(dataAccess);
+    public Server(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
+        userService = new UserService(userDAO, authDAO);
+        clearService = new ClearService(userDAO, authDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
     }
 
     public int run(int desiredPort) {

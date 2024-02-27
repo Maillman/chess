@@ -4,32 +4,38 @@ import Model.Auth;
 import Model.Join;
 import Model.User;
 import Model.Game;
-import dataAccess.DataAccess;
-import dataAccess.DataAccessException;
+import dataAccess.*;
 
 import java.util.List;
 import java.util.Objects;
 
 public class GameService {
-    private final DataAccess dataAccess;
-    public GameService(DataAccess dataAccess){
+    //private final DataAccess dataAccess;
+    private final AuthDAO authDAO;
+    private final GameDAO gameDAO;
+    /*public GameService(DataAccess dataAccess){
         this.dataAccess = dataAccess;
+    }
+     */
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
     }
 
     public Game createGame(String authToken, Game game) throws DataAccessException {
         checkAuthToken(authToken);
-        return dataAccess.createGame(game);
+        return gameDAO.createGame(game);
     }
 
     public void joinGame(String authToken, Join join) throws DataAccessException {
-        Auth auth = dataAccess.getAuth(authToken);
+        Auth auth = authDAO.getAuth(authToken);
         if(auth!=null){
-            Game foundGame = dataAccess.getGame(join.getGameID());
+            Game foundGame = gameDAO.getGame(join.getGameID());
             if(foundGame!=null){
                 if(     ((Objects.equals(join.getPlayerColor(), "WHITE") && ((Objects.equals(foundGame.getWhiteUsername(), ""))||foundGame.getWhiteUsername()==null))) ||
                         ((Objects.equals(join.getPlayerColor(), "BLACK") && ((Objects.equals(foundGame.getBlackUsername(), ""))||foundGame.getBlackUsername()==null))) ||
                         ((!Objects.equals(join.getPlayerColor(),"WHITE") && !Objects.equals(join.getPlayerColor(),"BLACK")))){
-                    dataAccess.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
+                    gameDAO.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
                 }else{
                     throw new DataAccessException("Already Taken!");
                 }
@@ -43,11 +49,11 @@ public class GameService {
 
     public List<Game> listGames(String authToken) throws DataAccessException {
         checkAuthToken(authToken);
-        return dataAccess.listGames();
+        return gameDAO.listGames();
     }
 
     private void checkAuthToken(String authToken) throws DataAccessException {
-        if(dataAccess.getAuth(authToken)==null){
+        if(authDAO.getAuth(authToken)==null){
             throw new DataAccessException("Unauthorized!");
         }
     }

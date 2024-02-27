@@ -31,12 +31,12 @@ public class JoinTest extends CreateListTest {
         create.joinGame(authToken.getAuthToken(),new Join("WHITE",1));
         //register test
         Auth newAuthToken = register.registerUser(newUser);
-        actualDatabase.createUser(newUser);
+        actualUserDAO.createUser(newUser);
         //check if the user has been registered
         //user is in the /user database
-        Assertions.assertEquals(actualDatabase.getUser(newUser.getUsername()),testDatabase.getUser(newUser.getUsername()),"User not register in database.");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()),testUserDAO.getUser(newUser.getUsername()),"User not register in database.");
         //authToken is in the /auth database
-        Assertions.assertEquals(newAuthToken, testDatabase.getAuth(newAuthToken.getAuthToken()), "authToken not registered in database.");
+        Assertions.assertEquals(newAuthToken, testAuthDAO.getAuth(newAuthToken.getAuthToken()), "authToken not registered in database.");
         //new authorized user also attempts to join as White;
         Assertions.assertThrows(DataAccessException.class, () -> create.joinGame(newAuthToken.getAuthToken(),new Join("WHITE",1)),"JoinGame not throwing exception (Attempted to join as white when already taken)!");
     }

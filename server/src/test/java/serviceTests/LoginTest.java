@@ -1,17 +1,10 @@
 package serviceTests;
 
 import Model.Auth;
-import Model.User;
-import chess.ChessGame;
-import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
-import dataAccess.memoryDataAccess;
 import org.junit.jupiter.api.*;
 import passoffTests.testClasses.TestException;
-import passoffTests.testClasses.TestModels;
-import service.UserService;
 
-import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("unused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginTest extends BaseTest {
@@ -24,9 +17,9 @@ public class LoginTest extends BaseTest {
         Auth authToken = login.login(existingUser);
         //check if the user has been logged-in
         //user is in the /user database
-        Assertions.assertEquals(actualDatabase.getUser(existingUser.getUsername()),testDatabase.getUser(existingUser.getUsername()),"User not register in database.");
+        Assertions.assertEquals(actualUserDAO.getUser(existingUser.getUsername()),testUserDAO.getUser(existingUser.getUsername()),"User not register in database.");
         //authToken is in the /auth database
-        Assertions.assertEquals(authToken, testDatabase.getAuth(authToken.getAuthToken()), "authToken not registered in database.");
+        Assertions.assertEquals(authToken, testAuthDAO.getAuth(authToken.getAuthToken()), "authToken not registered in database.");
     }
 
     @Test
