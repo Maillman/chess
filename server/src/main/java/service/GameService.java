@@ -10,13 +10,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameService {
-    //private final DataAccess dataAccess;
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
-    /*public GameService(DataAccess dataAccess){
-        this.dataAccess = dataAccess;
-    }
-     */
     public GameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;

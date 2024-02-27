@@ -22,12 +22,6 @@ public class Server {
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
-        /*
-        DataAccess dataAccess = new memoryDataAccess();
-        userService = new UserService(dataAccess);
-        clearService = new ClearService(dataAccess);
-        gameService = new GameService(dataAccess);
-         */
     }
     public Server(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
         userService = new UserService(userDAO, authDAO);
