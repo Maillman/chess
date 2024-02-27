@@ -1,5 +1,6 @@
 package server;
 
+import Model.Join;
 import Model.User;
 import Model.Auth;
 import Model.Game;
@@ -45,6 +46,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::list);
         Spark.post("/game", this::create);
+        Spark.put("/game", this::join);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -105,6 +107,32 @@ public class Server {
         }catch(DataAccessException e){
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";
+        }
+    }
+    private Object join(Request req, Response res) {
+        try{
+            var joinGame = new Gson().fromJson(req.body(), Join.class);
+            gameService.joinGame(req.headers("authorization"),joinGame);
+            return "{}";
+        }catch(DataAccessException e){
+            switch (e.getMessage()) {
+                case "No Game with that ID!" -> {
+                    res.status(400);
+                    return "{ \"message\": \"Error: bad request\" }";
+                }
+                case "Unauthorized!" -> {
+                    res.status(401);
+                    return "{ \"message\": \"Error: unauthorized\" }";
+                }
+                case "Color is already taken!" -> {
+                    res.status(403);
+                    return "{ \"message\": \"Error: already taken\" }";
+                }
+                default -> {
+                    res.status(500);
+                    return "{ \"message\": \"Error: description\" }";
+                }
+            }
         }
     }
 }

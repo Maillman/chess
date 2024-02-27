@@ -21,15 +21,15 @@ public class GameService {
         return dataAccess.createGame(game);
     }
 
-    public Game joinGame(String authToken, Join join) throws DataAccessException {
+    public void joinGame(String authToken, Join join) throws DataAccessException {
         Auth auth = dataAccess.getAuth(authToken);
         if(auth!=null){
             Game foundGame = dataAccess.getGame(join.getGameID());
-            if(foundGame.getGameID()!=null){
+            if(foundGame!=null){
                 if(     ((Objects.equals(join.getPlayerColor(), "White") && Objects.equals(foundGame.getWhiteUsername(), ""))) ||
                         ((Objects.equals(join.getPlayerColor(), "Black") && Objects.equals(foundGame.getBlackUsername(), ""))) ||
                         ((!Objects.equals(join.getPlayerColor(),"White") && Objects.equals(join.getPlayerColor(),"Black")))){
-                    return dataAccess.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
+                    dataAccess.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
                 }else{
                     throw new DataAccessException("Color is already taken!");
                 }
