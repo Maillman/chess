@@ -66,7 +66,7 @@ public class ChessGame {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
 
         if (piece.getPieceType() == ChessPiece.PieceType.KING && startPosition.getColumn() == 5) {
-            handleCastling(startPosition, moves, validMoves);
+            handleCastling(startPosition, validMoves);
         }
 
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
@@ -81,7 +81,7 @@ public class ChessGame {
         return validMoves;
     }
 
-    private void handleCastling(ChessPosition startPosition, ArrayList<ChessMove> moves, ArrayList<ChessMove> validMoves) {
+    private void handleCastling(ChessPosition startPosition, ArrayList<ChessMove> validMoves) {
         ChessPosition kingSide = new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 1);
         ChessPosition queenSide = new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 1);
         ChessPosition kingCastle = new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 2);
@@ -163,19 +163,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        //System.out.println("Just something");
         ArrayList<ChessMove> validMoves = new ArrayList<>(validMoves(move.getStartPosition()));
-        //System.out.println("Moving" + theBoard.getPiece(move.getStartPosition()).toString() + move.toString());
         if(!validMoves.contains(move)){
             throw new InvalidMoveException("Invalid Move: Piece can't go there!");
         }
         if(theBoard.getPiece(move.getStartPosition()).getTeamColor()!=turn){
             throw new InvalidMoveException("Invalid Move: Piece move out of order!");
         }
-        ChessGame checkGame = new ChessGame(turn, theBoard);
-        checkGame.getBoard().addPiece(move.getEndPosition(), checkGame.getBoard().getPiece(move.getStartPosition()));
-        checkGame.getBoard().addPiece(move.getStartPosition(), null);
-        if(checkGame.isInCheck(turn)){
+        if(!isValidMove(move.getStartPosition(),move)){
             throw new InvalidMoveException("Invalid Move: In check!");
         }
         //Makes the move.
@@ -186,7 +181,18 @@ public class ChessGame {
             theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         }
         theBoard.addPiece(move.getStartPosition(), null);
-        //Placing Castling Move
+        //Handle special cases
+        makeCastlingMove(move);
+        checkCastling(move);
+        checkEnPassant(move);
+        //Assuming the move is valid, and made. Switch turns.
+        switch (turn) {
+            case WHITE -> setTeamTurn(TeamColor.BLACK);
+            case BLACK -> setTeamTurn(TeamColor.WHITE);
+        }
+    }
+
+    private void makeCastlingMove(ChessMove move){
         if((preGame.getBoard().getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()== ChessPiece.PieceType.KING)&&((move.getEndPosition().getColumn()-move.getStartPosition().getColumn()==2))){
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()+1),new ChessPiece(turn, ChessPiece.PieceType.ROOK));
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),8),null);
@@ -194,7 +200,8 @@ public class ChessGame {
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),move.getStartPosition().getColumn()-1),new ChessPiece(turn, ChessPiece.PieceType.ROOK));
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(),1),null);
         }
-        //Checking for castling
+    }
+    private void checkCastling(ChessMove move){
         switch (turn) {
             case WHITE -> {
                 if(((preGame.getBoard().getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.KING))||((preGame.getBoard().getPiece(move.getStartPosition())!=null)&&(preGame.getBoard().getPiece(move.getStartPosition()).getPieceType()==ChessPiece.PieceType.ROOK)&&(Objects.equals(move.getStartPosition(), new ChessPosition(1, 8))))){
@@ -213,7 +220,8 @@ public class ChessGame {
                 }
             }
         }
-        //Checking for en passant
+    }
+    private void checkEnPassant(ChessMove move){
         switch (turn){
             case WHITE -> {
                 if(enPassantL&&(move.getStartPosition().getColumn()-1==move.getEndPosition().getColumn())){
@@ -232,13 +240,7 @@ public class ChessGame {
         }
         enPassantL = false;
         enPassantR = false;
-        //Assuming the move is valid, and made. Switch turns.
-        switch (turn) {
-            case WHITE -> setTeamTurn(TeamColor.BLACK);
-            case BLACK -> setTeamTurn(TeamColor.WHITE);
-        }
     }
-
     /**
      * Determines if the given team is in check
      *
@@ -287,13 +289,7 @@ public class ChessGame {
                 }
             }
             for (ChessMove pieceMove : pieceMoves) {
-                ChessGame checkGame = new ChessGame(teamColor, theBoard);
-                try {
-                    checkGame.makeMove(pieceMove);
-                } catch (InvalidMoveException ime) {
-                    System.out.println("Invalid Move");
-                }
-                if (!checkGame.isInCheck(teamColor)) {
+                if (isValidMove(pieceMove.getStartPosition(),pieceMove)) {
                     return false;
                 }
             }
@@ -323,15 +319,7 @@ public class ChessGame {
         }
         boolean stalemate = true;
         for(ChessMove pieceMove : pieceMoves){
-            ChessGame checkGame = new ChessGame(teamColor, theBoard);
-            try {
-                checkGame.makeMove(pieceMove);
-            }catch(InvalidMoveException ime){
-                System.out.println("Invalid Move");
-            }
-            checkGame.getBoard().addPiece(pieceMove.getEndPosition(), checkGame.getBoard().getPiece(pieceMove.getStartPosition()));
-            checkGame.getBoard().addPiece(pieceMove.getStartPosition(), null);
-            if(!checkGame.isInCheck(teamColor)){
+            if(isValidMove(pieceMove.getStartPosition(),pieceMove)){
                 stalemate = false;
             }
         }

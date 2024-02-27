@@ -2,7 +2,6 @@ package service;
 
 import Model.Auth;
 import Model.Join;
-import Model.User;
 import Model.Game;
 import dataAccess.*;
 

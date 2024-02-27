@@ -7,12 +7,11 @@ import passoffTests.testClasses.TestException;
 
 @SuppressWarnings("unused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LoginTest extends BaseTest {
-
+public class LogoutTest extends BaseTest {
     @Test
     @Order(1)
-    @DisplayName("Login Existing User Test!")
-    public void loginUser() throws TestException, DataAccessException {
+    @DisplayName("Logout Existing User Test!")
+    public void logoutUser() throws TestException, DataAccessException {
         //login test
         Auth auth = login.login(existingUser);
         //check if the user has been logged-in
@@ -20,13 +19,16 @@ public class LoginTest extends BaseTest {
         Assertions.assertEquals(actualUserDAO.getUser(existingUser.getUsername()),testUserDAO.getUser(existingUser.getUsername()),"User not register in database.");
         //authToken is in the /auth database
         Assertions.assertEquals(auth, testAuthDAO.getAuth(auth.getAuthToken()), "authToken not registered in database.");
+        login.logout(auth.getAuthToken());
+        //check if the user has logged-out
+        Assertions.assertNotEquals(auth, testAuthDAO.getAuth(auth.getAuthToken()), "User didn't logout.");
     }
-
     @Test
-    @Order(2)
-    @DisplayName("Login New User Test!")
-    public void loginNewUser() throws TestException {
-        //attempt to log-in existing user
-        Assertions.assertThrows(DataAccessException.class, () -> login.login(newUser),"Login not throwing exception!");
+    @Order(1)
+    @DisplayName("Unauthorized Logout Test!")
+    public void invalidLogout() throws TestException {
+        //attempt to log out with a random auth token
+        String invalidToken = "WHAT90235A329WONDERFUL328592386";
+        Assertions.assertThrows(DataAccessException.class, () -> login.logout(invalidToken),"Logout not throwing exception!");
     }
 }

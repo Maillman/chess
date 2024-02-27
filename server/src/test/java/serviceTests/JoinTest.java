@@ -15,20 +15,20 @@ public class JoinTest extends CreateListTest {
     @DisplayName("Create, Join, and List a Game Test!")
     public void createJoinListGame() throws TestException, DataAccessException {
         //authorized user joins as White
-        create.joinGame(authToken.getAuthToken(),new Join("WHITE",1));
+        create.joinGame(auth.getAuthToken(),new Join("WHITE",1));
         //getting list of games to compare
         expectedGames.clear();
         newGame = new Game(1, existingUser.getUsername(), "","newGame",null);
         expectedGames.add(newGame);
         //check if game updated
-        Assertions.assertEquals(expectedGames,create.listGames(authToken.getAuthToken()),"The game was not updated correctly!");
+        Assertions.assertEquals(expectedGames,create.listGames(auth.getAuthToken()),"The game was not updated correctly!");
     }
     @Test
     @Order(1)
     @DisplayName("Two Joins as White Test!")
     public void doubleWhiteGame() throws TestException, DataAccessException {
         //authorized user joins as White
-        create.joinGame(authToken.getAuthToken(),new Join("WHITE",1));
+        create.joinGame(auth.getAuthToken(),new Join("WHITE",1));
         //register test
         Auth newAuthToken = register.registerUser(newUser);
         actualUserDAO.createUser(newUser);

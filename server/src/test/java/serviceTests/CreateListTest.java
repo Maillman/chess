@@ -15,7 +15,7 @@ import java.util.List;
 public class CreateListTest extends BaseTest{
     protected static List<Game> expectedGames = new ArrayList<>();
     protected static List<Game> resultedGames = new ArrayList<>();
-    protected static Auth authToken;
+    protected static Auth auth;
     protected static Game newGame;
     @BeforeEach
     public void SetupGame() throws TestException, DataAccessException {
@@ -24,12 +24,12 @@ public class CreateListTest extends BaseTest{
         //The game
         newGame = new Game(1,"","","newGame",null);
         //create game with authorized user
-        authToken = register.login(existingUser);
-        create.createGame(authToken.getAuthToken(),newGame);
+        auth = register.login(existingUser);
+        create.createGame(auth.getAuthToken(),newGame);
         //getting list of games to compare
         expectedGames.add(newGame);
         //check if game is created
-        Assertions.assertEquals(expectedGames,create.listGames(authToken.getAuthToken()),"The game was not created correctly!");
+        Assertions.assertEquals(expectedGames,create.listGames(auth.getAuthToken()),"The game was not created correctly!");
     }
     @Test
     @Order(1)
@@ -39,22 +39,40 @@ public class CreateListTest extends BaseTest{
         Game anotherGame = new Game(2,"","","ssehC",null);
         Game aNewGame = new Game(3,"","","newGame",null);
         //create games with authorized user
-        authToken = register.login(existingUser);
-        create.createGame(authToken.getAuthToken(),anotherGame);
-        create.createGame(authToken.getAuthToken(),aNewGame);
+        auth = register.login(existingUser);
+        create.createGame(auth.getAuthToken(),anotherGame);
+        create.createGame(auth.getAuthToken(),aNewGame);
         //getting list of games to compare
         expectedGames.add(anotherGame);
         expectedGames.add(aNewGame);
         //check if games were created
-        Assertions.assertEquals(expectedGames,create.listGames(authToken.getAuthToken()),"The game was not created correctly!");
+        Assertions.assertEquals(expectedGames,create.listGames(auth.getAuthToken()),"The game was not created correctly!");
     }
     @Test
     @Order(2)
     @DisplayName("Unauthorized Create Game!")
-    public void unCreateGame() throws TestException, DataAccessException {
+    public void unCreateGame() throws TestException {
         //The game
         Game newGame = new Game(1,"","","newGame",null);
         //create game with unauthorized user
         Assertions.assertThrows(DataAccessException.class, () -> create.createGame("UNLAWFUL CRIMINAL",newGame),"CreateGame not throwing exception!");
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Unauthorized List Game!")
+    public void unListGame() throws TestException, DataAccessException {
+        //The games
+        Game anotherGame = new Game(2,"","","ssehC",null);
+        Game aNewGame = new Game(3,"","","newGame",null);
+        //create games with authorized user
+        auth = register.login(existingUser);
+        create.createGame(auth.getAuthToken(),anotherGame);
+        create.createGame(auth.getAuthToken(),aNewGame);
+        //getting list of games to compare
+        expectedGames.add(anotherGame);
+        expectedGames.add(aNewGame);
+        //attempt to list game with unauthorized token
+        Assertions.assertThrows(DataAccessException.class, () -> create.listGames("UNLAWFUL CRIMINAL"),"ListGames not throwing exception!");
     }
 }

@@ -74,7 +74,6 @@ public class ChessBoard {
                 squares[i][j] = board.squares[i][j];
             }
         }
-        //squares = board.squares.clone();
     }
     /**
      * Adds a chess piece to the chessboard
