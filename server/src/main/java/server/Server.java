@@ -87,11 +87,7 @@ public class Server {
     private Object list(Request req, Response res){
         try{
             var listGames = gameService.listGames(req.headers("authorization"));
-            if(!listGames.isEmpty()) {
-                return new Gson().toJson(new Games(listGames));
-            }else{
-                return "{}";
-            }
+            return new Gson().toJson(new Games(listGames));
         }catch(DataAccessException dae){
             return DataAccessException(req, res, dae);
         }
@@ -124,7 +120,7 @@ public class Server {
                 res.status(401);
                 return "{ \"message\": \"Error: unauthorized\" }";
             }
-            case "Color is already taken!" -> {
+            case "Already Taken!" -> {
                 res.status(403);
                 return "{ \"message\": \"Error: already taken\" }";
             }

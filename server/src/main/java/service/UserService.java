@@ -23,7 +23,7 @@ public class UserService {
             dataAccess.createUser(user);
             return createNewAuth(username);
         }else {
-            throw new DataAccessException("Username already taken!");
+            throw new DataAccessException("Already Taken!");
         }
     }
 

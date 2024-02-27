@@ -26,12 +26,12 @@ public class GameService {
         if(auth!=null){
             Game foundGame = dataAccess.getGame(join.getGameID());
             if(foundGame!=null){
-                if(     ((Objects.equals(join.getPlayerColor(), "WHITE") && !Objects.equals(foundGame.getWhiteUsername(), "WHITE"))) ||
-                        ((Objects.equals(join.getPlayerColor(), "BLACK") && !Objects.equals(foundGame.getBlackUsername(), "BLACK"))) ||
-                        ((!Objects.equals(join.getPlayerColor(),"WHITE") && Objects.equals(join.getPlayerColor(),"BLACK")))){
+                if(     ((Objects.equals(join.getPlayerColor(), "WHITE") && ((Objects.equals(foundGame.getWhiteUsername(), ""))||foundGame.getWhiteUsername()==null))) ||
+                        ((Objects.equals(join.getPlayerColor(), "BLACK") && ((Objects.equals(foundGame.getBlackUsername(), ""))||foundGame.getBlackUsername()==null))) ||
+                        ((!Objects.equals(join.getPlayerColor(),"WHITE") && !Objects.equals(join.getPlayerColor(),"BLACK")))){
                     dataAccess.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
                 }else{
-                    throw new DataAccessException("Color is already taken!");
+                    throw new DataAccessException("Already Taken!");
                 }
             }else{
                 throw new DataAccessException("Bad Request!");
