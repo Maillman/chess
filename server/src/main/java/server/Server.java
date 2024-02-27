@@ -1,9 +1,6 @@
 package server;
 
-import Model.Join;
-import Model.User;
-import Model.Auth;
-import Model.Game;
+import Model.*;
 import com.google.gson.Gson;
 import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
@@ -64,10 +61,8 @@ public class Server {
             var user = new Gson().fromJson(req.body(), User.class);
             var auth = userService.registerUser(user);
             return new Gson().toJson(auth);
-        }
-        catch(DataAccessException e) {
-            res.status(403);
-            return "{ \"message\": \"Error: already taken\" }";
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
         }
     }
 
@@ -76,27 +71,29 @@ public class Server {
             var user = new Gson().fromJson(req.body(), User.class);
             var auth = userService.login(user);
             return new Gson().toJson(auth);
-        }catch(DataAccessException e) {
-            res.status(401);
-            return "{ \"message\": \"Error: unauthorized\" }";
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
         }
     }
 
     private Object logout(Request req, Response res) {
+        try{
         userService.logout(req.headers("authorization"));
         return "{}";
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
+        }
     }
     private Object list(Request req, Response res){
         try{
             var listGames = gameService.listGames(req.headers("authorization"));
             if(!listGames.isEmpty()) {
-                return new Gson().toJson(listGames);
+                return new Gson().toJson(new Games(listGames));
             }else{
                 return "{}";
             }
-        }catch(DataAccessException e){
-            res.status(401);
-            return "{ \"message\": \"Error: unauthorized\" }";
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
         }
     }
     private Object create(Request req, Response res) {
@@ -104,9 +101,8 @@ public class Server {
             var game = new Gson().fromJson(req.body(), Game.class);
             game = gameService.createGame(req.headers("authorization"),game);
             return new Gson().toJson(game);
-        }catch(DataAccessException e){
-            res.status(401);
-            return "{ \"message\": \"Error: unauthorized\" }";
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
         }
     }
     private Object join(Request req, Response res) {
@@ -114,24 +110,27 @@ public class Server {
             var joinGame = new Gson().fromJson(req.body(), Join.class);
             gameService.joinGame(req.headers("authorization"),joinGame);
             return "{}";
-        }catch(DataAccessException e){
-            switch (e.getMessage()) {
-                case "No Game with that ID!" -> {
-                    res.status(400);
-                    return "{ \"message\": \"Error: bad request\" }";
-                }
-                case "Unauthorized!" -> {
-                    res.status(401);
-                    return "{ \"message\": \"Error: unauthorized\" }";
-                }
-                case "Color is already taken!" -> {
-                    res.status(403);
-                    return "{ \"message\": \"Error: already taken\" }";
-                }
-                default -> {
-                    res.status(500);
-                    return "{ \"message\": \"Error: description\" }";
-                }
+        }catch(DataAccessException dae){
+            return DataAccessException(req, res, dae);
+        }
+    }
+    private String DataAccessException(Request req, Response res, DataAccessException dae){
+        switch (dae.getMessage()) {
+            case "Bad Request!" -> {
+                res.status(400);
+                return "{ \"message\": \"Error: bad request\" }";
+            }
+            case "Unauthorized!" -> {
+                res.status(401);
+                return "{ \"message\": \"Error: unauthorized\" }";
+            }
+            case "Color is already taken!" -> {
+                res.status(403);
+                return "{ \"message\": \"Error: already taken\" }";
+            }
+            default -> {
+                res.status(500);
+                return "{ \"message\": \"Error: description\" }";
             }
         }
     }

@@ -64,8 +64,8 @@ public class memoryDataAccess implements DataAccess {
     public Game updateGame(String username, Integer gameID, String playerColor, Game upGame) {
         Game newGame = games.get(gameID);
         switch (playerColor) {
-            case "White" -> newGame = new Game(gameID,username,newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
-            case "Black" -> newGame = new Game(gameID,newGame.getWhiteUsername(),username, newGame.getGameName(), upGame.getGame());
+            case "WHITE" -> newGame = new Game(gameID,username,newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
+            case "BLACK" -> newGame = new Game(gameID,newGame.getWhiteUsername(),username, newGame.getGameName(), upGame.getGame());
             default -> newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
         }
         games.remove(gameID);

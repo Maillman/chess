@@ -15,6 +15,9 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
     public Auth registerUser(User user) throws DataAccessException {
+        if(user.getUsername()==null||user.getPassword()==null||user.getEmail()==null){
+            throw new DataAccessException("Bad Request!");
+        }
         String username = user.getUsername();
         if(dataAccess.getUser(username)==null){
             dataAccess.createUser(user);
@@ -39,9 +42,11 @@ public class UserService {
         return dataAccess.createAuth(authToken, username);
     }
 
-    public void logout(String authToken) {
+    public void logout(String authToken) throws DataAccessException {
         if(dataAccess.getAuth(authToken)!=null){
             dataAccess.deleteAuth(authToken);
+        }else{
+            throw new DataAccessException("Unauthorized!");
         }
     }
 }
