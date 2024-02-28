@@ -58,7 +58,7 @@ public class Server {
             var auth = userService.registerUser(user);
             return new Gson().toJson(auth);
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
 
@@ -68,7 +68,7 @@ public class Server {
             var auth = userService.login(user);
             return new Gson().toJson(auth);
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
 
@@ -77,7 +77,7 @@ public class Server {
         userService.logout(req.headers("authorization"));
         return "{}";
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
     private Object list(Request req, Response res){
@@ -85,7 +85,7 @@ public class Server {
             var listGames = gameService.listGames(req.headers("authorization"));
             return new Gson().toJson(new Games(listGames));
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
     private Object create(Request req, Response res) {
@@ -94,7 +94,7 @@ public class Server {
             game = gameService.createGame(req.headers("authorization"),game);
             return new Gson().toJson(game);
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
     private Object join(Request req, Response res) {
@@ -103,10 +103,10 @@ public class Server {
             gameService.joinGame(req.headers("authorization"),joinGame);
             return "{}";
         }catch(DataAccessException dae){
-            return DataAccessException(res, dae);
+            return dataAccessException(res, dae);
         }
     }
-    private String DataAccessException(Response res, DataAccessException dae){
+    private String dataAccessException(Response res, DataAccessException dae){
         switch (dae.getMessage()) {
             case "Bad Request!" -> {
                 res.status(400);

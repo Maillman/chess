@@ -234,130 +234,6 @@ public class ChessPiece {
     private boolean isValidPosition(int row, int column) {
         return row >= 1 && row <= 8 && column >= 1 && column <= 8;
     }
-    /*
-    private void pawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
-        final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
-        int[] curPos = startPos.clone();
-        if(board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE){
-            curPos[0]++;
-            ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
-            ChessMove newMove;
-            //Checking if the pawn can capture left-side
-            if((curPos[1]-1!=0)&&(board.getPiece(new ChessPosition(curPos[0],curPos[1]-1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]-1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
-                if(curPos[0]==8){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, new ChessPosition(curPos[0], curPos[1] - 1));
-                    pieceMoves.add(newMove);
-                }
-            }
-            //Checking if the pawn can capture right-side
-            if((curPos[1]+1!=9)&&(board.getPiece(new ChessPosition(curPos[0],curPos[1]+1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]+1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
-                if(curPos[0]==8){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, new ChessPosition(curPos[0], curPos[1] + 1));
-                    pieceMoves.add(newMove);
-                }
-            }
-            if(board.getPiece(newPos) == null){
-                if(curPos[0]==8){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
-                    if (startPos[0] == 2) {
-                        curPos[0]++;
-                        newPos = new ChessPosition(curPos[0], curPos[1]);
-                        if (board.getPiece(newPos) == null) {
-                            newMove = new ChessMove(myPosition, newPos);
-                            pieceMoves.add(newMove);
-                        }
-                    }
-                }
-            }
-        }
-        if(board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK){
-            curPos[0]--;
-            ChessPosition newPos = new ChessPosition(curPos[0],curPos[1]);
-            ChessMove newMove;
-            if((curPos[1]-1!=0)&&(board.getPiece(new ChessPosition(curPos[0],curPos[1]-1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]-1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
-                if(curPos[0]==1){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]-1),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, new ChessPosition(curPos[0], curPos[1] - 1));
-                    pieceMoves.add(newMove);
-                }
-            }
-            if((curPos[1]+1!=9)&&(board.getPiece(new ChessPosition(curPos[0],curPos[1]+1))!= null) && (board.getPiece(new ChessPosition(curPos[0],curPos[1]+1)).getTeamColor() != board.getPiece(myPosition).getTeamColor())){
-                if(curPos[0]==1){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]+1),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, new ChessPosition(curPos[0], curPos[1] + 1));
-                    pieceMoves.add(newMove);
-                }
-            }
-            if(board.getPiece(newPos) == null){
-                if(curPos[0]==1){
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.QUEEN);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.ROOK);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.BISHOP);
-                    pieceMoves.add(newMove);
-                    newMove = new ChessMove(myPosition,new ChessPosition(curPos[0],curPos[1]),PieceType.KNIGHT);
-                    pieceMoves.add(newMove);
-                }else {
-                    newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
-                    if (startPos[0] == 7) {
-                        curPos[0]--;
-                        newPos = new ChessPosition(curPos[0], curPos[1]);
-                        if (board.getPiece(newPos) == null) {
-                            newMove = new ChessMove(myPosition, newPos);
-                            pieceMoves.add(newMove);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
     private void pawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves) {
         ChessPiece piece = board.getPiece(myPosition);
         int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
@@ -415,89 +291,23 @@ public class ChessPiece {
                 board.getPiece(newPos) != null &&
                 board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor();
     }
+    private void king(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves) {
+        int[][] directions = {
+                {1, 0}, {1, 1}, {0, 1}, {-1, 1},
+                {-1, 0}, {-1, -1}, {0, -1}, {1, -1}
+        };
 
+        for (int[] dir : directions) {
+            int newRow = myPosition.getRow() + dir[0];
+            int newCol = myPosition.getColumn() + dir[1];
 
-    private void king(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
-        final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
-        int[] curPos = startPos.clone();
-        ChessPosition newPos;
-        //Start top
-        if(curPos[0]+1 != 9){
-            curPos[0]++;
-            //Top-Middle
-            newPos = new ChessPosition(curPos[0],curPos[1]);
-            if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                ChessMove newMove = new ChessMove(myPosition, newPos);
-                pieceMoves.add(newMove);
-            }
-            //Top-Left
-            if(curPos[1]-1 != 0) {
-                curPos[1]--;
-                newPos = new ChessPosition(curPos[0],curPos[1]);
-                if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                    ChessMove newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
+            if (isValidPosition(newRow, newCol)) {
+                ChessPosition newPos = new ChessPosition(newRow, newCol);
+                ChessPiece pieceAtNewPos = board.getPiece(newPos);
+
+                if (pieceAtNewPos == null || pieceAtNewPos.getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    pieceMoves.add(new ChessMove(myPosition, newPos));
                 }
-            }
-            curPos[1]=startPos[1];
-            //Top-Right
-            if(curPos[1]+1 != 9) {
-                curPos[1]++;
-                newPos = new ChessPosition(curPos[0],curPos[1]);
-                if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                    ChessMove newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
-                }
-            }
-        }
-        //Now bottom
-        curPos = startPos.clone();
-        if(curPos[0]-1 != 0){
-            curPos[0]--;
-            //Bottom-Middle
-            newPos = new ChessPosition(curPos[0],curPos[1]);
-            if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                ChessMove newMove = new ChessMove(myPosition, newPos);
-                pieceMoves.add(newMove);
-            }
-            //Bottom-Left
-            if(curPos[1]-1 != 0) {
-                curPos[1]--;
-                newPos = new ChessPosition(curPos[0],curPos[1]);
-                if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                    ChessMove newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
-                }
-            }
-            curPos[1]=startPos[1];
-            //Bottom-Right
-            if(curPos[1]+1 != 9) {
-                curPos[1]++;
-                newPos = new ChessPosition(curPos[0],curPos[1]);
-                if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                    ChessMove newMove = new ChessMove(myPosition, newPos);
-                    pieceMoves.add(newMove);
-                }
-            }
-        }
-        //Left
-        curPos = startPos.clone();
-        if(curPos[1]-1 != 0) {
-            curPos[1]--;
-            newPos = new ChessPosition(curPos[0],curPos[1]);
-            if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                ChessMove newMove = new ChessMove(myPosition, newPos);
-                pieceMoves.add(newMove);
-            }
-        }
-        //Right
-        curPos = startPos.clone();
-        if(curPos[1]+1 != 9) {
-            curPos[1]++;
-            newPos = new ChessPosition(curPos[0],curPos[1]);
-            if(!((board.getPiece(newPos) != null) && (board.getPiece(newPos).getTeamColor() == board.getPiece(myPosition).getTeamColor()))){
-                ChessMove newMove = new ChessMove(myPosition, newPos);
-                pieceMoves.add(newMove);
             }
         }
     }
