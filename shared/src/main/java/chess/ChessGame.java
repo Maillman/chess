@@ -277,17 +277,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition curPos;
         if(isInCheck(teamColor)) {
             ArrayList<ChessMove> pieceMoves = new ArrayList<>();
-            for (int i = 1; i <= 8; i++) {         //Iterating through the rows
-                for (int j = 1; j <= 8; j++) {     //Iterating through the columns
-                    curPos = new ChessPosition(i, j);
-                    if ((theBoard.getPiece(curPos) != null) && theBoard.getPiece(curPos).getTeamColor() == teamColor) {
-                        pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
-                    }
-                }
-            }
+            iteratePieceMoves(pieceMoves,teamColor);
             for (ChessMove pieceMove : pieceMoves) {
                 if (isValidMove(pieceMove.getStartPosition(),pieceMove)) {
                     return false;
@@ -307,16 +299,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        ChessPosition curPos;
+
         ArrayList<ChessMove> pieceMoves = new ArrayList<>();
-        for(int i = 1; i <= 8; i++){         //Iterating through the rows
-            for(int j = 1; j <= 8; j++){     //Iterating through the columns
-                curPos = new ChessPosition(i,j);
-                if((theBoard.getPiece(curPos)!=null)&&theBoard.getPiece(curPos).getTeamColor()==teamColor){
-                    pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
-                }
-            }
-        }
+        iteratePieceMoves(pieceMoves,teamColor);
         boolean stalemate = true;
         for(ChessMove pieceMove : pieceMoves){
             if(isValidMove(pieceMove.getStartPosition(),pieceMove)){
@@ -326,6 +311,17 @@ public class ChessGame {
         return stalemate;
     }
 
+    private void iteratePieceMoves(ArrayList<ChessMove> pieceMoves, TeamColor teamColor){
+        ChessPosition curPos;
+        for(int i = 1; i <= 8; i++){         //Iterating through the rows
+            for(int j = 1; j <= 8; j++){     //Iterating through the columns
+                curPos = new ChessPosition(i,j);
+                if((theBoard.getPiece(curPos)!=null)&&theBoard.getPiece(curPos).getTeamColor()==teamColor){
+                    pieceMoves.addAll(theBoard.getPiece(curPos).pieceMoves(theBoard, curPos));
+                }
+            }
+        }
+    }
     /**
      * Sets this game's chessboard with a given board
      *
