@@ -8,17 +8,14 @@ import service.UserService;
 import service.GameService;
 import spark.*;
 
-import javax.xml.crypto.Data;
-import java.awt.image.DataBuffer;
-
 public class Server {
     private final UserService userService;
     private final ClearService clearService;
     private final GameService gameService;
     public Server(){
-        UserDAO userDAO = new memoryUserDAO();
-        AuthDAO authDAO = new memoryAuthDAO();
-        GameDAO gameDAO = new memoryGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
@@ -36,7 +33,6 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.get("/", (req, res) -> "Hello, Chess Server!");
-        //TODO: Start here!!!
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);

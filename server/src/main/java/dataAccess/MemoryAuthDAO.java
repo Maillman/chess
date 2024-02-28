@@ -5,7 +5,7 @@ import Model.Auth;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class memoryAuthDAO implements AuthDAO{
+public class MemoryAuthDAO implements AuthDAO{
     final private HashMap<String, Auth> auths = new HashMap<>();
     @Override
     public Auth createAuth(String authToken, String username) {
@@ -31,7 +31,7 @@ public class memoryAuthDAO implements AuthDAO{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof memoryAuthDAO that)) return false;
+        if (!(o instanceof MemoryAuthDAO that)) return false;
         return Objects.equals(auths, that.auths);
     }
 

@@ -101,35 +101,35 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        ChessGame.TeamColor Color = ChessGame.TeamColor.WHITE;
+        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         int rank = 0;
         //White-Side
-        squares[rank][0] = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
-        squares[rank][7] = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
-        squares[rank][1] = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
-        squares[rank][6] = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
-        squares[rank][2] = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
-        squares[rank][5] = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
-        squares[rank][3] = new ChessPiece(Color, ChessPiece.PieceType.QUEEN);
-        squares[rank][4] = new ChessPiece(Color, ChessPiece.PieceType.KING);
+        squares[rank][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        squares[rank][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        squares[rank][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        squares[rank][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        squares[rank][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        squares[rank][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        squares[rank][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
+        squares[rank][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
         rank++;
         for (int i = 0; i < 8; i++) {
-            squares[rank][i] = new ChessPiece(Color, ChessPiece.PieceType.PAWN);
+            squares[rank][i] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
         }
         //Black-Side
-        Color = ChessGame.TeamColor.BLACK;
+        color = ChessGame.TeamColor.BLACK;
         rank = 7;
-        squares[rank][0] = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
-        squares[rank][7] = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
-        squares[rank][1] = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
-        squares[rank][6] = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
-        squares[rank][2] = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
-        squares[rank][5] = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
-        squares[rank][3] = new ChessPiece(Color, ChessPiece.PieceType.QUEEN);
-        squares[rank][4] = new ChessPiece(Color, ChessPiece.PieceType.KING);
+        squares[rank][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        squares[rank][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        squares[rank][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        squares[rank][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        squares[rank][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        squares[rank][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        squares[rank][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
+        squares[rank][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
         rank--;
         for (int i = 0; i < 8; i++) {
-            squares[rank][i] = new ChessPiece(Color, ChessPiece.PieceType.PAWN);
+            squares[rank][i] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
         }
         castleKingSideW = true;
         castleQueenSideW = true;

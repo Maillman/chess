@@ -26,12 +26,12 @@ public abstract class BaseTest {
     @BeforeAll
     public static void init() throws TestException {
         //MemoryDatabase
-        testUserDAO = new memoryUserDAO();
-        testAuthDAO = new memoryAuthDAO();
-        testGameDAO = new memoryGameDAO();
-        actualUserDAO = new memoryUserDAO();
-        actualAuthDAO = new memoryAuthDAO();
-        actualGameDAO = new memoryGameDAO();
+        testUserDAO = new MemoryUserDAO();
+        testAuthDAO = new MemoryAuthDAO();
+        testGameDAO = new MemoryGameDAO();
+        actualUserDAO = new MemoryUserDAO();
+        actualAuthDAO = new MemoryAuthDAO();
+        actualGameDAO = new MemoryGameDAO();
         existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
         newUser = new User("newUser","newPassword","new@Email.com");
     }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class memoryGameDAO implements GameDAO{
+public class MemoryGameDAO implements GameDAO{
     private int gameID = 0;
     final private HashMap<Integer, Game> games = new HashMap<>();
 
@@ -55,7 +55,7 @@ public class memoryGameDAO implements GameDAO{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof memoryGameDAO that)) return false;
+        if (!(o instanceof MemoryGameDAO that)) return false;
         return gameID == that.gameID && Objects.equals(games, that.games);
     }
 

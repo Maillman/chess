@@ -119,10 +119,11 @@ public class ChessPiece {
         }
         return pieceMoves;
     }
-    private void knightL(String Direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
+    /*
+    private void knightL(String direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
-        if(Objects.equals(Direction, "Up")){
+        if(Objects.equals(direction, "Up")){
             if(!(curPos[0]+2 >= 9)){
                 curPos[0] = curPos[0] + 2;
                 if(!(curPos[1]-1 <= 0)){
@@ -143,7 +144,7 @@ public class ChessPiece {
                     }
                 }
             }
-        }else if(Objects.equals(Direction, "Down")){
+        }else if(Objects.equals(direction, "Down")){
             if(!(curPos[0]-2 <= 0)){
                 curPos[0] = curPos[0] - 2;
                 if(!(curPos[1]-1 <= 0)){
@@ -164,7 +165,7 @@ public class ChessPiece {
                     }
                 }
             }
-        }else if(Objects.equals(Direction, "Left")){
+        }else if(Objects.equals(direction, "Left")){
             if(!(curPos[1]-2 <= 0)){
                 curPos[1] = curPos[1] - 2;
                 if(!(curPos[0]-1 <= 0)){
@@ -185,7 +186,7 @@ public class ChessPiece {
                     }
                 }
             }
-        }else if(Objects.equals(Direction, "Right")){
+        }else if(Objects.equals(direction, "Right")){
             if(!(curPos[1]+2 >= 9)){
                 curPos[1] = curPos[1] + 2;
                 if(!(curPos[0]-1 <= 0)){
@@ -208,7 +209,32 @@ public class ChessPiece {
             }
         }
     }
+    */
+    private void knightL(String direction, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves) {
+        final int[][] moves = {
+                {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+        };
 
+        for (int[] move : moves) {
+            int newRow = myPosition.getRow() + move[0];
+            int newColumn = myPosition.getColumn() + move[1];
+
+            if (isValidPosition(newRow, newColumn)) {
+                ChessPosition newPos = new ChessPosition(newRow, newColumn);
+                ChessPiece newPiece = board.getPiece(newPos);
+
+                if (newPiece == null || newPiece.getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    pieceMoves.add(new ChessMove(myPosition, newPos));
+                }
+            }
+        }
+    }
+
+    private boolean isValidPosition(int row, int column) {
+        return row >= 1 && row <= 8 && column >= 1 && column <= 8;
+    }
+    /*
     private void pawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
@@ -331,6 +357,66 @@ public class ChessPiece {
             }
         }
     }
+    */
+    private void pawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves) {
+        ChessPiece piece = board.getPiece(myPosition);
+        int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
+        int[] curPos = startPos.clone();
+
+        int forwardDirection = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+        int startRow = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 2 : 7;
+        int endRow = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 8 : 1;
+        ChessPosition newPos = new ChessPosition(curPos[0], curPos[1]);
+
+        pawnMoveForward(board,curPos,myPosition,newPos,pieceMoves,forwardDirection,endRow);
+        //Start pawn moves forward twice
+        if(myPosition.getRow()==startRow&&board.getPiece(new ChessPosition(curPos[0],curPos[1]))==null){
+            pawnMoveForward(board,curPos,myPosition,newPos,pieceMoves,forwardDirection,endRow);
+            curPos[0] -= forwardDirection;
+        }
+
+        // Check left capture
+        curPos[1]--;
+        newPos = new ChessPosition(curPos[0], curPos[1]);
+        if (isValidPawnCapture(board, myPosition, newPos)) {
+            addPawnMove(board, myPosition, newPos, pieceMoves, endRow);
+        }
+
+        // Check right capture
+        curPos[1] += 2;
+        newPos = new ChessPosition(curPos[0], curPos[1]);
+        if (isValidPawnCapture(board, myPosition, newPos)) {
+            addPawnMove(board, myPosition, newPos, pieceMoves, endRow);
+        }
+    }
+
+    private void pawnMoveForward(ChessBoard board, int[] curPos,ChessPosition newPos, ChessPosition myPosition, Collection<ChessMove> pieceMoves,int forwardDirection, int endRow){
+        curPos[0] += forwardDirection;
+        newPos = new ChessPosition(curPos[0], curPos[1]);
+        addPawnMove(board, myPosition, newPos, pieceMoves, endRow);
+    }
+
+    private void addPawnMove(ChessBoard board, ChessPosition myPosition, ChessPosition newPos, Collection<ChessMove> pieceMoves, int endRow) {
+        ChessPiece newPiece = board.getPiece(newPos);
+        if (newPiece == null||newPos.getColumn()!=myPosition.getColumn()) {
+            if (newPos.getRow() == endRow) {
+                pieceMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
+                pieceMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+                pieceMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+                pieceMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
+            } else {
+                pieceMoves.add(new ChessMove(myPosition, newPos));
+            }
+        }
+    }
+
+    private boolean isValidPawnCapture(ChessBoard board, ChessPosition myPosition, ChessPosition newPos) {
+        return isValidPosition(newPos.getRow(), newPos.getColumn()) &&
+                board.getPiece(newPos) != null &&
+                board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor();
+    }
+
+
     private void king(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> pieceMoves){
         final int[] startPos = {myPosition.getRow(), myPosition.getColumn()};
         int[] curPos = startPos.clone();
