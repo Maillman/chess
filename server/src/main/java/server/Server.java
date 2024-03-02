@@ -12,7 +12,9 @@ public class Server {
     private final UserService userService;
     private final ClearService clearService;
     private final GameService gameService;
+    private final SQLDatabaseManager database = new SQLDatabaseManager();
     public Server(){
+        //MemoryDAO
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
@@ -28,6 +30,14 @@ public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+
+        //MySQL Startup
+        //TODO: I don't know what to put here?
+        try{
+            database.initializeDatabase();
+        }catch(DataAccessException dae){
+            System.out.println("Error initializing database!");
+        }
 
         Spark.staticFiles.location("web");
 
