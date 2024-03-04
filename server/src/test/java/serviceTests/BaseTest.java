@@ -4,6 +4,7 @@ import Model.User;
 import dataAccess.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passoffTests.testClasses.TestException;
 import service.ClearService;
 import service.GameService;
@@ -11,8 +12,10 @@ import service.UserService;
 
 public abstract class BaseTest {
     protected static User existingUser;
+    protected static User hashedExistingUser;
 
     protected static User newUser;
+    protected static User hashedNewUser;
     protected static UserDAO testUserDAO;
     protected static AuthDAO testAuthDAO;
     protected static GameDAO testGameDAO;
@@ -23,6 +26,7 @@ public abstract class BaseTest {
     protected static UserService login;
     protected static GameService create;
     protected static ClearService clear;
+    protected static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     @BeforeAll
     public static void init() throws TestException {
         //MemoryDatabase
@@ -32,8 +36,12 @@ public abstract class BaseTest {
         actualUserDAO = new MemoryUserDAO();
         actualAuthDAO = new MemoryAuthDAO();
         actualGameDAO = new MemoryGameDAO();
+        String hashedPassword = encoder.encode("existingUserPassword");
         existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
+        hashedExistingUser = new User("ExistingUser",hashedPassword,"eu@mail.com");
+        hashedPassword = encoder.encode("newPassword");
         newUser = new User("newUser","newPassword","new@Email.com");
+        hashedNewUser = new User("newUser",hashedPassword,"new@Email.com");
     }
     @BeforeEach
     public void setUp() throws TestException {
@@ -43,8 +51,8 @@ public abstract class BaseTest {
         actualUserDAO.clear();
         actualAuthDAO.clear();
         actualGameDAO.clear();
-        actualUserDAO.createUser(existingUser);
-        testUserDAO.createUser(existingUser);
+        actualUserDAO.createUser(hashedExistingUser);
+        testUserDAO.createUser(hashedExistingUser);
         register = new UserService(testUserDAO,testAuthDAO);
         login = new UserService(testUserDAO, testAuthDAO);
         create = new GameService(testAuthDAO, testGameDAO);

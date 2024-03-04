@@ -5,6 +5,7 @@ import Model.Join;
 import Model.Game;
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passoffTests.testClasses.TestException;
 
 @SuppressWarnings("unused")
@@ -31,10 +32,12 @@ public class JoinTest extends CreateListTest {
         create.joinGame(auth.getAuthToken(),new Join("WHITE",1));
         //register test
         Auth newAuthToken = register.registerUser(newUser);
-        actualUserDAO.createUser(newUser);
+        actualUserDAO.createUser(hashedNewUser);
         //check if the user has been registered
         //user is in the /user database
-        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()),testUserDAO.getUser(newUser.getUsername()),"User not register in database.");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()).getUsername(),testUserDAO.getUser(newUser.getUsername()).getUsername(),"User not register in database.");
+        Assertions.assertTrue(encoder.matches(newUser.getPassword(), actualUserDAO.getUser(newUser.getUsername()).getPassword()),"Password not entered correctly");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()).getEmail(),testUserDAO.getUser(newUser.getUsername()).getEmail(),"Email not register in database.");
         //authToken is in the /auth database
         Assertions.assertEquals(newAuthToken, testAuthDAO.getAuth(newAuthToken.getAuthToken()), "authToken not registered in database.");
         //new authorized user also attempts to join as White;
