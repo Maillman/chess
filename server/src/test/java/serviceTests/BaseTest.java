@@ -44,7 +44,7 @@ public abstract class BaseTest {
         hashedNewUser = new User("newUser",hashedPassword,"new@Email.com");
     }
     @BeforeEach
-    public void setUp() throws TestException {
+    public void setUp() throws TestException, DataAccessException {
         testUserDAO.clear();
         testAuthDAO.clear();
         testGameDAO.clear();

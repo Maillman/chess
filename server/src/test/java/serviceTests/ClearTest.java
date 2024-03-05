@@ -1,6 +1,7 @@
 package serviceTests;
 
 import Model.User;
+import dataAccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import passoffTests.testClasses.TestException;
 
@@ -8,7 +9,7 @@ import passoffTests.testClasses.TestException;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ClearTest extends BaseTest {
     @BeforeEach
-    public void setup() throws TestException {
+    public void setup() throws TestException, DataAccessException {
         actualUserDAO.clear();
         actualAuthDAO.clear();
         actualGameDAO.clear();
@@ -16,7 +17,7 @@ public class ClearTest extends BaseTest {
     @Test
     @Order(1)
     @DisplayName("Clear Service Test")
-    public void clearData() throws TestException {
+    public void clearData() throws TestException, DataAccessException {
         //create filler users
         newUser = new User("newUser","newPassword","new@Email.com");
         testUserDAO.createUser(newUser);
@@ -37,7 +38,7 @@ public class ClearTest extends BaseTest {
     @Test
     @Order(2)
     @DisplayName("Multiple Clears")
-    public void clearManyData() throws TestException {
+    public void clearManyData() throws TestException, DataAccessException {
         //clear an empty database
         clear.clear();
         //create filler users

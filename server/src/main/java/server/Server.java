@@ -59,8 +59,12 @@ public class Server {
         Spark.awaitStop();
     }
     private Object clear(Request req, Response res) {
-        clearService.clear();
-        return "{}";
+        try {
+            clearService.clear();
+            return "{}";
+        }catch(DataAccessException dae){
+            return daeHandler(res, dae);
+        }
     }
     private Object register(Request req, Response res) {
         try {
