@@ -10,7 +10,6 @@ import passoffTests.testClasses.TestException;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDAOTest {
     protected static UserDAO testUserDAO;
-    protected static UserDAO actualUserDAO;
     protected static User existingUser;
     protected static User newUser;
     @BeforeAll
@@ -18,6 +17,13 @@ public class UserDAOTest {
         //SQLDatabase
         testUserDAO = new SQLUserDAO();
         existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
+        newUser = new User("NewUser","newUserPassword","nu@mail.com");
+    }
+
+    @BeforeEach
+    public void setUp() throws TestException, DataAccessException {
+        testUserDAO.clear();
+        testUserDAO.createUser(existingUser);
     }
 
     @Test
@@ -25,20 +31,20 @@ public class UserDAOTest {
     @DisplayName("Insert User Test")
     public void insert() throws TestException, DataAccessException {
         //Inserting a user into the database.
-        testUserDAO.createUser(existingUser);
+        testUserDAO.createUser(newUser);
+        //check if user can be found in database.
+        Assertions.assertEquals(testUserDAO.getUser(newUser.getUsername()),newUser,"The User has not been inserted correctly!");
     }
-
     @Test
     @Order(2)
-    @DisplayName("Get User Test")
-    public void get() throws TestException, DataAccessException {
-        //check if existing user can be found in database.
-        Assertions.assertEquals(testUserDAO.getUser(existingUser.getUsername()),existingUser,"The User has not been inserted correctly!");
+    @DisplayName("Invalid Get Test")
+    public void invalidGet() throws TestException, DataAccessException {
+        //trying to get a user not registered in database.
+        Assertions.assertThrows(DataAccessException.class, () -> testUserDAO.getUser(newUser.getUsername()),"Clear not throwing exception!");
     }
-
     @Test
     @Order(3)
-    @DisplayName("Clear and Invalid Get Test")
+    @DisplayName("Clear Test")
     public void clear() throws TestException, DataAccessException {
         //clear the database
         testUserDAO.clear();
