@@ -5,6 +5,9 @@ import dataAccess.*;
 import org.junit.jupiter.api.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passoffTests.testClasses.TestException;
+
+@SuppressWarnings("unused")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDAOTest {
     protected static UserDAO testUserDAO;
     protected static UserDAO actualUserDAO;
@@ -12,7 +15,7 @@ public class UserDAOTest {
     protected static User newUser;
     @BeforeAll
     public static void init() throws TestException {
-        //MemoryDatabase
+        //SQLDatabase
         testUserDAO = new SQLUserDAO();
         existingUser = new User("ExistingUser","existingUserPassword","eu@mail.com");
     }

@@ -47,7 +47,7 @@ public class UserService {
         throw new DataAccessException("Unauthorized!");
     }
 
-    private Auth createNewAuth(String username) {
+    private Auth createNewAuth(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         return authDAO.createAuth(authToken, username);
     }

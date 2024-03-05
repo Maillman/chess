@@ -1,5 +1,6 @@
 package dataAccess;
 
+import Model.User;
 import com.google.gson.Gson;
 
 import Model.Auth;
@@ -13,22 +14,59 @@ import static java.sql.Types.NULL;
 
 public class SQLAuthDAO implements AuthDAO{
     @Override
-    public Auth createAuth(String authToken, String username) {
-        return null;
+    public Auth createAuth(String authToken, String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("insert into auths (token, username) values (?, ?)", RETURN_GENERATED_KEYS)){
+                preparedStatement.setString(1, authToken);
+                preparedStatement.setString(2, username);
+
+                preparedStatement.executeUpdate();
+
+                return new Auth(authToken, username);
+            }
+        }catch (SQLException se) {
+            throw new DataAccessException("SQL error!");
+        }
     }
 
     @Override
-    public Auth getAuth(String authToken) {
-        return null;
+    public Auth getAuth(String authToken) throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("select token, username from auths where token=?", RETURN_GENERATED_KEYS)){
+                preparedStatement.setString(1, authToken);
+                try (var rs = preparedStatement.executeQuery()) {
+                    rs.next();
+                    var retToken = rs.getString("username");
+                    var retUsername = rs.getString("username");
+
+                    return new Auth(retToken, retUsername);
+                }
+            }
+        }catch (SQLException se) {
+            throw new DataAccessException("SQL error!");
+        }
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("delete from auths where token=?")) {
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeUpdate();
+            }
+        }catch (SQLException se) {
+            throw new DataAccessException("SQL error!");
+        }
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("truncate Auths")) {
+                preparedStatement.executeUpdate();
+            }
+        }catch (SQLException se) {
+            throw new DataAccessException("SQL error!");
+        }
     }
 }

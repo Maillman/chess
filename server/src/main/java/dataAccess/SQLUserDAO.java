@@ -12,8 +12,6 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 public class SQLUserDAO implements UserDAO{
 
-    private final SQLDatabaseManager database = new SQLDatabaseManager();
-
     @Override
     public User getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
