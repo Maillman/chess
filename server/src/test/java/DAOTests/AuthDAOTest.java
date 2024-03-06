@@ -1,7 +1,7 @@
 package DAOTests;
 
 import Model.Auth;
-import Model.User;
+
 import dataAccess.*;
 import org.junit.jupiter.api.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
