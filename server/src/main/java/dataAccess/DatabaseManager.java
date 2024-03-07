@@ -67,7 +67,6 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
-
     public void initializeDatabase() throws DataAccessException {
         configureDatabase();
     }
