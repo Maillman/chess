@@ -85,6 +85,9 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public Game updateGame(String username, Integer gameID, String playerColor, Game upGame) throws DataAccessException{
         Game newGame = this.getGame(gameID);
+        if(newGame==null){
+            throw new DataAccessException("Bad Request!");
+        }
         if(playerColor == null){
             newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
         }else {

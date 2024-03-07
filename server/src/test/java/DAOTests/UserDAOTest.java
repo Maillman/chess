@@ -40,7 +40,7 @@ public class UserDAOTest {
     @DisplayName("Invalid Get Test")
     public void invalidGet() throws TestException, DataAccessException {
         //trying to get a user not registered in database.
-        Assertions.assertThrows(DataAccessException.class, () -> testUserDAO.getUser(newUser.getUsername()),"Get not throwing exception!");
+        Assertions.assertEquals(null, testUserDAO.getUser(newUser.getUsername()),"User not null");
     }
     @Test
     @Order(3)
@@ -49,6 +49,6 @@ public class UserDAOTest {
         //clear the database
         testUserDAO.clear();
         //check if users database cleared by running a negative test.
-        Assertions.assertThrows(DataAccessException.class, () -> testUserDAO.getUser(existingUser.getUsername()),"Clear not throwing exception!");
+        Assertions.assertEquals(null, testUserDAO.getUser(existingUser.getUsername()),"User not cleared");
     }
 }

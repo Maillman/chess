@@ -91,6 +91,6 @@ public class GameDAOTest {
         //clear the database
         testGameDAO.clear();
         //check if users database cleared by running a negative test.
-        Assertions.assertThrows(DataAccessException.class, () -> testGameDAO.getGame(existingGame.getGameID()),"Clear not throwing exception!");
+        Assertions.assertEquals(null, testGameDAO.getGame(existingGame.getGameID()),"Games not null");
     }
 }

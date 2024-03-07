@@ -50,8 +50,8 @@ public class AuthDAOTest {
     @Order(3)
     @DisplayName("Invalid Get Auth Test")
     public void invalidGet() throws TestException, DataAccessException {
-        //check if existing user can be found in database.
-        Assertions.assertThrows(DataAccessException.class, () -> testAuthDAO.getAuth(newAuth.getAuthToken()),"Auth not throwing exception");
+        //check if auth can be found in database.
+        Assertions.assertEquals(null, testAuthDAO.getAuth(newAuth.getAuthToken()),"Auth not null");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class AuthDAOTest {
         //delete the existing user in the database.
         testAuthDAO.deleteAuth(existingAuth.getAuthToken());
         //check if users database cleared by running a negative test.
-        Assertions.assertThrows(DataAccessException.class, () -> testAuthDAO.getAuth(existingAuth.getAuthToken()),"Auth wasn't properly deleted!");
+        Assertions.assertEquals(null, testAuthDAO.getAuth(existingAuth.getAuthToken()),"Auth not properly deleted!");
     }
     @Test
     @Order(5)
@@ -72,6 +72,6 @@ public class AuthDAOTest {
         //clear the database.
         testAuthDAO.clear();
         //check if users database cleared by running a negative test.
-        Assertions.assertThrows(DataAccessException.class, () -> testAuthDAO.getAuth(existingAuth.getAuthToken()),"Clear not throwing exception!");
+        Assertions.assertEquals(null, testAuthDAO.getAuth(existingAuth.getAuthToken()),"Auth not null");
     }
 }
