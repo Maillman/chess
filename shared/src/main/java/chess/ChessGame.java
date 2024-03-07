@@ -339,4 +339,16 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return theBoard;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessGame chessGame)) return false;
+        return enPassantL == chessGame.enPassantL && enPassantR == chessGame.enPassantR && turn == chessGame.turn && Objects.equals(theBoard, chessGame.theBoard) && Objects.equals(preGame, chessGame.preGame);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, theBoard, preGame, enPassantL, enPassantR);
+    }
 }

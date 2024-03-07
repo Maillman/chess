@@ -17,7 +17,25 @@ import static java.sql.Types.NULL;
 public class SQLGameDAO implements GameDAO{
     @Override
     public List<Game> listGames() throws DataAccessException{
-        return null;
+        List<Game> listGames = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("select id, whiteusername, blackusername, gamename, chessgame from games", RETURN_GENERATED_KEYS)) {
+                try (var rs = preparedStatement.executeQuery()) {
+                    while(rs.next()){
+                        int id = rs.getInt("id");
+                        String retWhiteUsername = rs.getString("whiteusername");
+                        String retBlackUsername = rs.getString("blackusername");
+                        String gameName = rs.getString("gamename");
+                        ChessGame theGame = new Gson().fromJson(rs.getString("chessgame"),ChessGame.class);
+                        Game addGame = new Game(id, retWhiteUsername, retBlackUsername, gameName, theGame);
+                        listGames.add(addGame);
+                    }
+                    return listGames;
+                }
+            }
+        }catch(SQLException se){
+            throw new DataAccessException("SQL error!");
+        }
     }
 
     @Override
