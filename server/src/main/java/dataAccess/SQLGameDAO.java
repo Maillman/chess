@@ -84,7 +84,29 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public Game updateGame(String username, Integer gameID, String playerColor, Game upGame) throws DataAccessException{
-        return null;
+        Game newGame = this.getGame(gameID);
+        if(playerColor == null){
+            newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
+        }else {
+            switch (playerColor) {
+                case "WHITE" -> newGame = new Game(gameID, username, newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
+                case "BLACK" -> newGame = new Game(gameID, newGame.getWhiteUsername(), username, newGame.getGameName(), upGame.getGame());
+            }
+        }
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("update games set whiteusername=?, blackusername=?, gamename=?, chessgame=? where id=?", RETURN_GENERATED_KEYS)) {
+                var json = new Gson().toJson(newGame.getGame());
+                preparedStatement.setString(1, newGame.getWhiteUsername());
+                preparedStatement.setString(2, newGame.getBlackUsername());
+                preparedStatement.setString(3, newGame.getGameName());
+                preparedStatement.setString(4, json);
+                preparedStatement.setInt(5, gameID);
+                preparedStatement.executeUpdate();
+                return newGame;
+            }
+        }catch(SQLException se){
+            throw new DataAccessException("SQL error!");
+        }
     }
 
     @Override
