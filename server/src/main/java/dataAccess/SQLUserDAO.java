@@ -27,7 +27,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            return null;
         }
     }
 

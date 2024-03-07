@@ -1,13 +1,11 @@
 import chess.*;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.*;
 import server.Server;
 
 public class Main {
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Server: " + piece);
-        new Server(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO()).run(8080);
+        new Server(new SQLUserDAO(), new SQLAuthDAO(), new SQLGameDAO()).run(8080);
     }
 }

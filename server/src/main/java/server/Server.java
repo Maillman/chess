@@ -14,10 +14,10 @@ public class Server {
     private final GameService gameService;
     private final SQLDatabaseManager database = new SQLDatabaseManager();
     public Server(){
-        //MemoryDAO
-        UserDAO userDAO = new MemoryUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        //SQLDAO
+        UserDAO userDAO = new SQLUserDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
@@ -32,7 +32,6 @@ public class Server {
         Spark.port(desiredPort);
 
         //MySQL Startup
-        //TODO: I don't know what to put here?
         try{
             database.initializeDatabase();
         }catch(DataAccessException dae){
@@ -88,8 +87,8 @@ public class Server {
 
     private Object logout(Request req, Response res) {
         try{
-        userService.logout(req.headers("authorization"));
-        return "{}";
+            userService.logout(req.headers("authorization"));
+            return "{}";
         }catch(DataAccessException dae){
             return daeHandler(res, dae);
         }

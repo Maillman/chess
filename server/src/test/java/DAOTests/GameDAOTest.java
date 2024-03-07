@@ -23,7 +23,6 @@ public class GameDAOTest {
     @BeforeAll
     public static void init() throws TestException {
         testGameDAO = new SQLGameDAO();
-
     }
 
     @BeforeEach

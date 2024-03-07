@@ -43,7 +43,7 @@ public class SQLAuthDAO implements AuthDAO{
                 }
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            return null;
         }
     }
 
