@@ -1,10 +1,9 @@
-package DAOTests;
+package dataAccessTests;
 
 import Model.Auth;
 
 import dataAccess.*;
 import org.junit.jupiter.api.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passoffTests.testClasses.TestException;
 @SuppressWarnings("unused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

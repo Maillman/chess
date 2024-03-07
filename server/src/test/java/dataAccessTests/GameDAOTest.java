@@ -1,4 +1,4 @@
-package DAOTests;
+package dataAccessTests;
 
 
 import Model.Game;
@@ -6,7 +6,6 @@ import Model.Game;
 import chess.ChessGame;
 import dataAccess.*;
 import org.junit.jupiter.api.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passoffTests.testClasses.TestException;
 
 import java.util.ArrayList;
