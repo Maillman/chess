@@ -37,18 +37,37 @@ public class UserDAOTest {
     }
     @Test
     @Order(2)
-    @DisplayName("Invalid Get Test")
-    public void invalidGet() throws TestException, DataAccessException {
-        //trying to get a user not registered in database.
-        Assertions.assertEquals(null, testUserDAO.getUser(newUser.getUsername()),"User not null");
+    @DisplayName("Insert Multiple Users Test")
+    public void insertMultiple() throws TestException, DataAccessException {
+        //Inserting users into the database.
+        testUserDAO.createUser(newUser);
+        User anotherUser = new User("AnotherUser","myPassword","anu@mail.com");
+        testUserDAO.createUser(anotherUser);
+        //check if users can be found in database.
+        Assertions.assertEquals(testUserDAO.getUser(anotherUser.getUsername()),anotherUser,"The User has not been inserted correctly!");
+        Assertions.assertEquals(testUserDAO.getUser(newUser.getUsername()),newUser,"The User has not been inserted correctly!");
     }
     @Test
     @Order(3)
+    @DisplayName("Get Test")
+    public void get() throws TestException, DataAccessException {
+        //check if user can be found in database.
+        Assertions.assertEquals(testUserDAO.getUser(existingUser.getUsername()),existingUser,"Get not working correctly!");
+    }
+    @Test
+    @Order(4)
+    @DisplayName("Invalid Get Test")
+    public void invalidGet() throws TestException, DataAccessException {
+        //trying to get a user not registered in database.
+        Assertions.assertNull(testUserDAO.getUser(newUser.getUsername()), "User not null");
+    }
+    @Test
+    @Order(5)
     @DisplayName("Clear Test")
     public void clear() throws TestException, DataAccessException {
         //clear the database
         testUserDAO.clear();
         //check if users database cleared by running a negative test.
-        Assertions.assertEquals(null, testUserDAO.getUser(existingUser.getUsername()),"User not cleared");
+        Assertions.assertNull(testUserDAO.getUser(existingUser.getUsername()), "User not cleared");
     }
 }

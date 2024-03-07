@@ -86,11 +86,21 @@ public class GameDAOTest {
 
     @Test
     @Order(5)
+    @DisplayName("Listing Empty List Test")
+    public void emptyList() throws TestException, DataAccessException{
+        //clear the database
+        testGameDAO.clear();
+        //check if games were created
+        Assertions.assertEquals(expectedGames,testGameDAO.listGames(),"The list wasn't emptied correctly!");
+    }
+
+    @Test
+    @Order(6)
     @DisplayName("Clear Test")
     public void clear() throws TestException, DataAccessException {
         //clear the database
         testGameDAO.clear();
         //check if users database cleared by running a negative test.
-        Assertions.assertEquals(null, testGameDAO.getGame(existingGame.getGameID()),"Games not null");
+        Assertions.assertNull(testGameDAO.getGame(existingGame.getGameID()), "Games not null");
     }
 }
