@@ -12,7 +12,7 @@ public class Server {
     private final UserService userService;
     private final ClearService clearService;
     private final GameService gameService;
-    private final SQLDatabaseManager database = new SQLDatabaseManager();
+    private final DatabaseManager database = new DatabaseManager();
     public Server(){
         //SQLDAO
         UserDAO userDAO = new SQLUserDAO();
