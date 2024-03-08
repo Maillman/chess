@@ -51,7 +51,7 @@ public class SQLUserDAO implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ public class SQLUserDAO implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 }
