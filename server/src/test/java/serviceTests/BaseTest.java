@@ -2,6 +2,7 @@ package serviceTests;
 
 import Model.User;
 import dataAccess.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,5 +59,14 @@ public abstract class BaseTest {
         login = new UserService(testUserDAO, testAuthDAO);
         create = new GameService(testAuthDAO, testGameDAO);
         clear = new ClearService(testUserDAO, testAuthDAO, testGameDAO);
+    }
+    @AfterAll
+    public static void shutDown() throws TestException, DataAccessException {
+        testUserDAO.clear();
+        testAuthDAO.clear();
+        testGameDAO.clear();
+        actualUserDAO.clear();
+        actualAuthDAO.clear();
+        actualGameDAO.clear();
     }
 }
