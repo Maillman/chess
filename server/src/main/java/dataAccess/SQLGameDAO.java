@@ -43,7 +43,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         }catch(SQLException se){
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class SQLGameDAO implements GameDAO{
                 }
             }
         }catch(SQLException se){
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ public class SQLGameDAO implements GameDAO{
                 return newGame;
             }
         }catch(SQLException se){
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class SQLGameDAO implements GameDAO{
                 preparedStatement.executeUpdate();
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 }

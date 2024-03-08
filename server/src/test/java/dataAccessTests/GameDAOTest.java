@@ -77,6 +77,22 @@ public class GameDAOTest {
 
     @Test
     @Order(4)
+    @DisplayName("Join as Watcher Test!")
+    public void joinWatch() throws TestException, DataAccessException {
+        //create and put a game into the database.
+        testGameDAO.createGame(newGame);
+        //update the game in the database with new usernames
+        testGameDAO.updateGame("Phoenix_Gamer", newGame.getGameID(), "",newGame);
+        testGameDAO.updateGame("Maillman", newGame.getGameID(), "",newGame);
+        //getting list of games to compare
+        expectedGames.add(existingGame);
+        expectedGames.add(newGame);
+        //check if games were created and updated
+        Assertions.assertEquals(expectedGames,testGameDAO.listGames(),"The game was not updated correctly!");
+    }
+
+    @Test
+    @Order(5)
     @DisplayName("Access Out of Bounds Test")
     public void outOfBounds() throws TestException {
         //attempt to update a game that isn't in the database
@@ -84,7 +100,7 @@ public class GameDAOTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Listing Empty List Test")
     public void emptyList() throws TestException, DataAccessException{
         //clear the database
@@ -94,7 +110,7 @@ public class GameDAOTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Clear Test")
     public void clear() throws TestException, DataAccessException {
         //clear the database

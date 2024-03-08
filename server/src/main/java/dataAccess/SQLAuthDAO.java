@@ -34,7 +34,7 @@ public class SQLAuthDAO implements AuthDAO{
                 return new Auth(authToken, username);
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class SQLAuthDAO implements AuthDAO{
                 preparedStatement.executeUpdate();
             }
         }catch (SQLException se) {
-            throw new DataAccessException("SQL error!");
+            throw new DataAccessException(se.getMessage());
         }
     }
 }

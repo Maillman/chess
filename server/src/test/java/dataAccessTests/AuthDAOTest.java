@@ -62,6 +62,17 @@ public class AuthDAOTest {
         //check if users database cleared by running a negative test.
         Assertions.assertNull(testAuthDAO.getAuth(existingAuth.getAuthToken()), "Auth not properly deleted!");
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("Invalid Delete Auth Test")
+    public void invalidDelete() throws TestException, DataAccessException {
+        //delete the existing user in the database.
+        testAuthDAO.deleteAuth(newAuth.getAuthToken());
+        //check if users database cleared by running a negative test.
+        Assertions.assertEquals(existingAuth, testAuthDAO.getAuth(existingAuth.getAuthToken()), "Auth deleted when shouldn't!");
+        Assertions.assertNull(testAuthDAO.getAuth(newAuth.getAuthToken()), "Auth not properly deleted!");
+    }
     @Test
     @Order(5)
     @DisplayName("Clear and Invalid Get Test")

@@ -46,27 +46,56 @@ public class UserDAOTest {
         Assertions.assertEquals(testUserDAO.getUser(anotherUser.getUsername()),anotherUser,"The User has not been inserted correctly!");
         Assertions.assertEquals(testUserDAO.getUser(newUser.getUsername()),newUser,"The User has not been inserted correctly!");
     }
+
     @Test
     @Order(3)
+    @DisplayName("Insert User Twice Test")
+    public void insertTwice() throws TestException, DataAccessException {
+        //Inserting user into the database.
+        User anotherUser = new User("AnotherUser","myPassword","anu@mail.com");
+        testUserDAO.createUser(anotherUser);
+        //Attempt to insert again.
+        Assertions.assertThrows(DataAccessException.class, () -> testUserDAO.createUser(anotherUser),"User not throwing exception!");
+    }
+    @Test
+    @Order(4)
     @DisplayName("Get Test")
     public void get() throws TestException, DataAccessException {
         //check if user can be found in database.
         Assertions.assertEquals(testUserDAO.getUser(existingUser.getUsername()),existingUser,"Get not working correctly!");
     }
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("Invalid Get Test")
     public void invalidGet() throws TestException, DataAccessException {
         //trying to get a user not registered in database.
         Assertions.assertNull(testUserDAO.getUser(newUser.getUsername()), "User not null");
     }
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Clear Test")
     public void clear() throws TestException, DataAccessException {
         //clear the database
         testUserDAO.clear();
         //check if users database cleared by running a negative test.
         Assertions.assertNull(testUserDAO.getUser(existingUser.getUsername()), "User not cleared");
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Multiple Clear Test")
+    public void multiClear() throws TestException, DataAccessException {
+        //clear the database
+        testUserDAO.clear();
+        //check if users database cleared by running a negative test.
+        Assertions.assertNull(testUserDAO.getUser(existingUser.getUsername()), "User not cleared");
+        //fill the database
+        testUserDAO.createUser(existingUser);
+        testUserDAO.createUser(newUser);
+        //clear the database
+        testUserDAO.clear();
+        //check if users database cleared by running a negative test.
+        Assertions.assertNull(testUserDAO.getUser(existingUser.getUsername()), "User not cleared");
+        Assertions.assertNull(testUserDAO.getUser(newUser.getUsername()), "User not cleared");
     }
 }
