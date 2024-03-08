@@ -12,6 +12,15 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 public class SQLUserDAO implements UserDAO{
 
+    public SQLUserDAO(){
+        //MySQL Startup
+        try{
+            DatabaseManager database  = new DatabaseManager();
+            database.initializeDatabase();
+        }catch(DataAccessException dae){
+            System.out.println("Error initializing database!");
+        }
+    }
     @Override
     public User getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {

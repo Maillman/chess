@@ -31,13 +31,6 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
-        //MySQL Startup
-        try{
-            database.initializeDatabase();
-        }catch(DataAccessException dae){
-            System.out.println("Error initializing database!");
-        }
-
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.

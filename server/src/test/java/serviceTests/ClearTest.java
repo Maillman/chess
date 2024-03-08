@@ -2,6 +2,7 @@ package serviceTests;
 
 import Model.User;
 import dataAccess.DataAccessException;
+import dataAccess.SQLUserDAO;
 import org.junit.jupiter.api.*;
 import passoffTests.testClasses.TestException;
 
@@ -32,7 +33,8 @@ public class ClearTest extends BaseTest {
         //clear the database
         clear.clear();
         //check if the database cleared
-        Assertions.assertEquals(actualUserDAO,testUserDAO,"The user database did not clear!");
+        Assertions.assertEquals(actualUserDAO.getUser(existingUser.getUsername()),testUserDAO.getUser(existingUser.getUsername()),"The user database did not clear!");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()),testUserDAO.getUser(newUser.getUsername()),"The user database did not clear!");
     }
 
     @Test
@@ -48,12 +50,14 @@ public class ClearTest extends BaseTest {
         testUserDAO.createUser(newUser);
         //clear the database
         clear.clear();
-        Assertions.assertEquals(actualUserDAO,testUserDAO,"The user database did not clear!");
+        Assertions.assertEquals(actualUserDAO.getUser(existingUser.getUsername()),testUserDAO.getUser(existingUser.getUsername()),"The user database did not clear!");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()),testUserDAO.getUser(newUser.getUsername()),"The user database did not clear!");
         //create more filler users
         newUser = new User("Phoenix_Gamer","...21FDS-=_game","Leverage@TheWorld.com");
         testUserDAO.createUser(newUser);
         actualUserDAO.createUser(newUser);
         //check if the database is filled correctly post-clear
-        Assertions.assertEquals(actualUserDAO, testUserDAO, "The user database did not get filled");
+        Assertions.assertEquals(actualUserDAO.getUser(existingUser.getUsername()),testUserDAO.getUser(existingUser.getUsername()),"The user database did not clear!");
+        Assertions.assertEquals(actualUserDAO.getUser(newUser.getUsername()),testUserDAO.getUser(newUser.getUsername()),"The user database did not clear!");
     }
 }

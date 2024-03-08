@@ -15,6 +15,15 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO{
+    public SQLGameDAO(){
+        //MySQL Startup
+        try{
+            DatabaseManager database  = new DatabaseManager();
+            database.initializeDatabase();
+        }catch(DataAccessException dae){
+            System.out.println("Error initializing database!");
+        }
+    }
     @Override
     public List<Game> listGames() throws DataAccessException{
         List<Game> listGames = new ArrayList<>();

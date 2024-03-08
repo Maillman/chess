@@ -29,10 +29,11 @@ public abstract class BaseTest {
     protected static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     @BeforeAll
     public static void init() throws TestException {
+        //SQLDatabase
+        testUserDAO = new SQLUserDAO();
+        testAuthDAO = new SQLAuthDAO();
+        testGameDAO = new SQLGameDAO();
         //MemoryDatabase
-        testUserDAO = new MemoryUserDAO();
-        testAuthDAO = new MemoryAuthDAO();
-        testGameDAO = new MemoryGameDAO();
         actualUserDAO = new MemoryUserDAO();
         actualAuthDAO = new MemoryAuthDAO();
         actualGameDAO = new MemoryGameDAO();
