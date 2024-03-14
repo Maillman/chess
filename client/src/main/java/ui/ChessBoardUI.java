@@ -29,9 +29,14 @@ public class ChessBoardUI {
         ChessBoard initBoard = new ChessBoard();
         initBoard.resetBoard();
         newGame.setBoard(initBoard);
+        out.println("White's Perspective:");
         drawChessBoard(out, newGame, Perspective.WHITE);
         out.println();
+        out.println("Black's Perspective:");
         drawChessBoard(out, newGame, Perspective.BLACK);
+        out.println();
+        out.println("Watcher's Perspective:");
+        drawChessBoard(out, newGame, Perspective.WATCH);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
