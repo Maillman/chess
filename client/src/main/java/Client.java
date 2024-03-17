@@ -1,9 +1,15 @@
 import java.util.Scanner;
 
+import Model.User;
 import ui.*;
 
 public class Client {
+    private final ServerFacade server;
     private String authToken = null;
+
+    public Client(String serverURL){
+        server = new ServerFacade(serverURL);
+    }
 
     public void run(){
         Scanner scanner = new Scanner(System.in);
@@ -37,8 +43,47 @@ public class Client {
                 }
             }
             default -> {
-                System.out.println("That is not a valid command!");
-                evaluate("help");
+                boolean validCMD;
+                if(authToken==null){
+                    validCMD = evalPreLogin(result);
+                }else{
+                    validCMD = evalPostLogin(result);
+                }
+                if(!validCMD){
+                    System.out.println("That is not a valid command!");
+                    evaluate("help");
+                }
+            }
+        }
+    }
+    private boolean evalPreLogin(String result) {
+        try {
+            String[] resEval = result.split(" ");
+            switch (resEval[0]) {
+                case "register" -> {
+                    if (resEval.length >= 4) {
+                        authToken = server.register(new User(resEval[1], resEval[2], resEval[3])).getAuthToken();
+                        System.out.println("You have successfully logged in!");
+                    } else {
+                        System.out.println("Not enough arguments where expected (Expected 4, Got " + resEval.length + ").");
+                        System.out.println("Register <USERNAME> <PASSWORD> <EMAIL>");
+                    }
+                    return true;
+                }
+                default -> {
+                    return false;
+                }
+            }
+        }catch(ResponseException re){
+            System.out.println(re.getMessage());
+            evaluate("help");
+            return true;
+        }
+    }
+    private boolean evalPostLogin(String result){
+        switch (result){
+            default -> {
+                return false;
             }
         }
     }
