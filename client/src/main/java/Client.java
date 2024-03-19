@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 import Model.Game;
 import Model.User;
+import chess.ChessGame;
 import ui.*;
 
 public class Client {
@@ -65,6 +66,7 @@ public class Client {
                     if (resEval.length >= 4) {
                         authToken = server.register(new User(resEval[1], resEval[2], resEval[3])).getAuthToken();
                         System.out.println("You have successfully registered and logged in!");
+                        postLoginUI();
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 4, Got " + resEval.length + ").");
                         System.out.println("Register <USERNAME> <PASSWORD> <EMAIL>");
@@ -75,6 +77,7 @@ public class Client {
                     if (resEval.length >= 3) {
                         authToken = server.login(new User(resEval[1], resEval[2], null)).getAuthToken();
                         System.out.println("You have successfully logged in!");
+                        postLoginUI();
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 3, Got " + resEval.length + ").");
                         System.out.println("Login <USERNAME> <PASSWORD>");
@@ -101,7 +104,7 @@ public class Client {
                 }
                 case "create" -> {
                     if (resEval.length >= 2) {
-                        Game game = server.create(authToken);
+                        Game game = server.create(new Game(null,null,null,resEval[1],new ChessGame()));
                         System.out.println("The Game " + resEval[1] + " was created! It's ID is " + game.getGameID() + ".");
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + resEval.length + ").");

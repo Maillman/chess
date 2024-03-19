@@ -40,7 +40,7 @@ public class ClientConnector {
     }
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException{
         T response = null;
-        if (http.getContentLength() > 0){
+        if (http.getContentLength() < 0){
             try(InputStream respBody = http.getInputStream()){
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if(responseClass != null){
@@ -53,7 +53,7 @@ public class ClientConnector {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if(!isSuccessful(status)) {
-            throw new ResponseException(status, "Error: Couldn't connect to server. " + status);
+            throw new ResponseException(status, "Error: Something went wrong with the server. " + status);
         }
     }
     private boolean isSuccessful(int statusCode) {
