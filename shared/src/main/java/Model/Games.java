@@ -8,4 +8,15 @@ public class Games {
     public Games(List<Game> games) {
         this.games = games;
     }
+
+    public List<Game> getGames() {
+        return games;
+    }
+
+    @Override
+    public String toString() {
+        return "Games{" +
+                "games=" + games +
+                '}';
+    }
 }

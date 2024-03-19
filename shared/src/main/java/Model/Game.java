@@ -50,4 +50,15 @@ public class Game{
     public int hashCode() {
         return Objects.hash(getGameID(), getWhiteUsername(), getBlackUsername(), getGameName(), getGame());
     }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "gameID=" + gameID +
+                ", whiteUsername='" + whiteUsername + '\'' +
+                ", blackUsername='" + blackUsername + '\'' +
+                ", gameName='" + gameName + '\'' +
+                ", game=" + game +
+                '}';
+    }
 }

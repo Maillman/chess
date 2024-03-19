@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 import Model.Game;
@@ -99,12 +100,13 @@ public class Client {
             String[] resEval = result.split(" ");
             switch (resEval[0]) {
                 case "list" -> {
-                    System.out.println(server.list(authToken));
+                    List<Game> games = server.list(authToken).getGames();
+                    System.out.println(games.toString());
                     return true;
                 }
                 case "create" -> {
                     if (resEval.length >= 2) {
-                        Game game = server.create(new Game(null,null,null,resEval[1],new ChessGame()));
+                        Game game = server.create(new Game(null,null,null,resEval[1],new ChessGame()),authToken);
                         System.out.println("The Game " + resEval[1] + " was created! It's ID is " + game.getGameID() + ".");
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + resEval.length + ").");

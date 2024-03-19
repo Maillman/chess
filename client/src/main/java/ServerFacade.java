@@ -3,6 +3,8 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ServerFacade {
@@ -22,13 +24,15 @@ public class ServerFacade {
         return conn.makeRequest("POST", path, user, Auth.class);
     }
 
-    public List<Game> list(String authToken) throws ResponseException {
+    public Games list(String authToken) throws ResponseException {
         var path = "/game";
-        return conn.makeRequest("GET", path, authToken, List.class);
+        conn.addRequestHeader(authToken);
+        return conn.makeRequest("GET", path, null, Games.class);
     }
 
-    public Game create(Game game) throws ResponseException {
+    public Game create(Game game, String authToken) throws ResponseException {
         var path = "/game";
+        conn.addRequestHeader(authToken);
         return conn.makeRequest("POST", path, game, Game.class);
     }
 }

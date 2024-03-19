@@ -11,8 +11,12 @@ import java.net.URL;
 
 public class ClientConnector {
     private final String serverURL;
+    private static String requestHeader;
     public ClientConnector(String url) {
         serverURL = url;
+    }
+    public void addRequestHeader(String reqHeader){
+        requestHeader = reqHeader;
     }
     public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try{
@@ -20,13 +24,19 @@ public class ClientConnector {
             HttpURLConnection http = (HttpURLConnection)  uri.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
+            writeHeader(http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         }catch(Exception e){
             throw new ResponseException(500, e.getMessage());
+        }
+    }
+    private static void writeHeader(HttpURLConnection http){
+        if(requestHeader!=null){
+            http.addRequestProperty("authorization", requestHeader);
+            requestHeader = null;
         }
     }
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
