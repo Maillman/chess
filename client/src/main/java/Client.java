@@ -1,6 +1,9 @@
+import java.util.List;
 import java.util.Scanner;
 
+import Model.Game;
 import Model.User;
+import chess.ChessGame;
 import ui.*;
 
 public class Client {
@@ -63,10 +66,22 @@ public class Client {
                 case "register" -> {
                     if (resEval.length >= 4) {
                         authToken = server.register(new User(resEval[1], resEval[2], resEval[3])).getAuthToken();
-                        System.out.println("You have successfully logged in!");
+                        System.out.println("You have successfully registered and logged in!");
+                        postLoginUI();
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 4, Got " + resEval.length + ").");
                         System.out.println("Register <USERNAME> <PASSWORD> <EMAIL>");
+                    }
+                    return true;
+                }
+                case "login" -> {
+                    if (resEval.length >= 3) {
+                        authToken = server.login(new User(resEval[1], resEval[2], null)).getAuthToken();
+                        System.out.println("You have successfully logged in!");
+                        postLoginUI();
+                    } else {
+                        System.out.println("Not enough arguments where expected (Expected 3, Got " + resEval.length + ").");
+                        System.out.println("Login <USERNAME> <PASSWORD>");
                     }
                     return true;
                 }
@@ -81,28 +96,68 @@ public class Client {
         }
     }
     private boolean evalPostLogin(String result){
-        switch (result){
-            default -> {
-                return false;
+        try {
+            String[] resEval = result.split(" ");
+            switch (resEval[0]) {
+                case "list" -> {
+                    List<Game> games = server.list(authToken).getGames();
+                    System.out.println(games.toString());
+                    return true;
+                }
+                case "create" -> {
+                    if (resEval.length >= 2) {
+                        Game game = server.create(new Game(null,null,null,resEval[1],new ChessGame()),authToken);
+                        System.out.println("The Game " + resEval[1] + " was created! It's ID is " + game.getGameID() + ".");
+                    } else {
+                        System.out.println("Not enough arguments where expected (Expected 2, Got " + resEval.length + ").");
+                        System.out.println("Create <ID>");
+                    }
+                    return true;
+                }
+                default -> {
+                    return false;
+                }
             }
+        }catch(ResponseException re){
+            System.out.println(re.getMessage());
+            evaluate("help");
+            return true;
         }
     }
 
     private void postLoginUI() {
+        uiPreHelper();
+        helpPostLogin();
+        uiPostHelper();
     }
 
     private void preLoginUI() {
-        System.out.println("Execute any of the commands below!");
+        uiPreHelper();
         helpPreLogin();
+        uiPostHelper();
     }
-    private void helpPreLogin(){
+    private void uiPreHelper(){
+        System.out.println("Execute any of the commands below!");
         System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
         System.out.println();
+    }
+    private void uiPostHelper(){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+    }
+    private void helpPreLogin(){
         System.out.println("Help: List possible commands.");
         System.out.println("Register <USERNAME> <PASSWORD> <EMAIL>: Creates an account to interact with the server.");
         System.out.println("Login <USERNAME> <PASSWORD>: Allows the ability to create, join, and list Chess Games in the server.");
         System.out.println("Quit: Exit the program.");
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+    }
+    private void helpPostLogin(){
+        System.out.println("Help: List possible commands.");
+        System.out.println("Logout: Log out of the server.");
+        System.out.println("List: Lists all of the games that currently exist in the server.");
+        System.out.println("Create: <GAMENAME>: Creates a game of chess to join and play.");
+        System.out.println("Join <ID> [WHITE|BLACK|<empty>]: Allows the ability to play (or observe if no color is specified) the specified game of chess.");
+        System.out.println("Observer <ID>: Allows the ability to observe the specified game of chess.");
+        System.out.println("Quit: Exit the program.");
     }
     private void printPrompt() {
         System.out.print("\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + " >>> " + EscapeSequences.SET_TEXT_COLOR_WHITE);
