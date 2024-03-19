@@ -1,39 +1,19 @@
 import Model.*;
 import com.google.gson.Gson;
 
-import java.io.*;
-import java.net.*;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 
-public class ServerFacade {
+public class ClientConnector {
     private final String serverURL;
-
-    public ServerFacade(String url){
+    public ClientConnector(String url) {
         serverURL = url;
     }
-
-    public Auth register(User user) throws ResponseException{
-        var path = "/user";
-        return this.makeRequest("POST", path, user, Auth.class);
-    }
-
-    public Auth login(User user) throws ResponseException {
-        var path = "/session";
-        return this.makeRequest("POST", path, user, Auth.class);
-    }
-
-    public List<Game> list(String authToken) throws ResponseException {
-        var path = "/game";
-        return this.makeRequest("GET", path, authToken, List.class);
-    }
-
-    public Game create(String authToken) throws ResponseException {
-        var path = "/game";
-        return this.makeRequest("POST", path, authToken, Game.class);
-    }
-
-
-
     public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try{
             URL uri = (new URI(serverURL + path)).toURL();
