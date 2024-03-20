@@ -34,4 +34,15 @@ public class ServerFacade {
         conn.addRequestHeader(authToken);
         return conn.makeRequest("POST", path, game, Game.class);
     }
+
+    public Game join(Join join, String authToken) throws ResponseException {
+        var path = "/game";
+        conn.addRequestHeader(authToken);
+        return conn.makeRequest("PUT", path, join, Game.class);
+    }
+
+    public void clear() throws ResponseException {
+        var path = "/db";
+        conn.makeRequest("DELETE", path, null, null);
+    }
 }

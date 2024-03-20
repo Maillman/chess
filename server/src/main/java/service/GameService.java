@@ -21,7 +21,7 @@ public class GameService {
         return gameDAO.createGame(game);
     }
 
-    public void joinGame(String authToken, Join join) throws DataAccessException {
+    public Game joinGame(String authToken, Join join) throws DataAccessException {
         Auth auth = authDAO.getAuth(authToken);
         if(auth!=null){
             Game foundGame = gameDAO.getGame(join.getGameID());
@@ -29,7 +29,7 @@ public class GameService {
                 if(     ((Objects.equals(join.getPlayerColor(), "WHITE") && ((Objects.equals(foundGame.getWhiteUsername(), ""))||foundGame.getWhiteUsername()==null))) ||
                         ((Objects.equals(join.getPlayerColor(), "BLACK") && ((Objects.equals(foundGame.getBlackUsername(), ""))||foundGame.getBlackUsername()==null))) ||
                         ((!Objects.equals(join.getPlayerColor(),"WHITE") && !Objects.equals(join.getPlayerColor(),"BLACK")))){
-                    gameDAO.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
+                    return gameDAO.updateGame(auth.getUsername(),foundGame.getGameID(),join.getPlayerColor(),foundGame);
                 }else{
                     throw new DataAccessException("Already Taken!");
                 }

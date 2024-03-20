@@ -105,8 +105,8 @@ public class Server {
     private Object join(Request req, Response res) {
         try{
             var joinGame = new Gson().fromJson(req.body(), Join.class);
-            gameService.joinGame(req.headers("authorization"),joinGame);
-            return "{}";
+            var game = gameService.joinGame(req.headers("authorization"),joinGame);
+            return new Gson().toJson(game);
         }catch(DataAccessException dae){
             return daeHandler(res, dae);
         }

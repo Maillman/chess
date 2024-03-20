@@ -16,7 +16,7 @@ public class ChessBoardUI {
     private static final String EMPTY = "   ";
     private static final String[] LETTERS = new String[]{"a","b","c","d","e","f","g","h"};
 
-    private enum Perspective {
+    public enum Perspective {
         WHITE,
         BLACK,
         WATCH
@@ -41,7 +41,7 @@ public class ChessBoardUI {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawChessBoard(PrintStream out, ChessGame theGame, Perspective perspective) {
+    public static void drawChessBoard(PrintStream out, ChessGame theGame, Perspective perspective) {
         int boardRow, boardColumn;
         if (perspective== Perspective.BLACK) {
             boardRow = 0;

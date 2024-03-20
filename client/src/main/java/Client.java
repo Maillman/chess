@@ -1,10 +1,14 @@
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
-import Model.Game;
-import Model.User;
+import Model.*;
 import chess.ChessGame;
 import ui.*;
+
+import static ui.ChessBoardUI.Perspective.*;
 
 public class Client {
     private final ServerFacade server;
@@ -119,6 +123,22 @@ public class Client {
                         System.out.println("Create <ID>");
                     }
                 }
+                case "join" -> {
+                    if (result.length >= 3) {
+                        joinObserve(result);
+                    }else{
+                        System.out.println("Not enough arguments where expected (Expected 3, Got " + result.length + ").");
+                        System.out.println("Join <ID> [WHITE|BLACK|<empty>]");
+                    }
+                }
+                case "observe" -> {
+                    if(result.length >= 2) {
+                        joinObserve(result);
+                    }else{
+                        System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
+                        System.out.println("Observe <ID>");
+                    }
+                }
                 default -> {
                     isSuccessful = false;
                 }
@@ -129,6 +149,33 @@ public class Client {
             evaluate(new String[]{"help"});
             return true;
         }
+    }
+
+    private void joinObserve(String[] result) throws ResponseException {
+        Join join;
+        if(Objects.equals(result[0], "join")){
+            join = new Join(result[2],Integer.parseInt(result[1]));
+            System.out.println("You have successfully joined the game!");
+        }else{
+            join = new Join("WATCH",Integer.parseInt(result[1]));
+            System.out.println("You are observing the game");
+        }
+        Game game = server.join(join,authToken);
+        assert join != null;
+        clientDrawChessBoard(game, join);
+    }
+
+    private void clientDrawChessBoard(Game game, Join join) {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        ChessBoardUI.Perspective persp;
+        if(Objects.equals(join.getPlayerColor(), "WHITE")){
+            persp = WHITE;
+        }else if(Objects.equals(join.getPlayerColor(), "BLACK")){
+            persp = BLACK;
+        }else{
+            persp = WATCH;
+        }
+        ChessBoardUI.drawChessBoard(out,game.getGame(),persp);
     }
 
     private void postLoginUI() {

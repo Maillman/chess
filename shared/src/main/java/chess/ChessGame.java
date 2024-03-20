@@ -18,7 +18,8 @@ public class ChessGame {
 
     boolean enPassantL = false, enPassantR = false;
     public ChessGame() {
-
+        theBoard = new ChessBoard();
+        theBoard.resetBoard();
     }
 
     public ChessGame(TeamColor team, ChessBoard board){
