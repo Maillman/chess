@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 import Model.*;
 import chess.ChessGame;
+import client2server.ResponseException;
+import client2server.ServerFacade;
 import ui.*;
 
 import static ui.ChessBoardUI.Perspective.*;
@@ -153,15 +155,16 @@ public class Client {
 
     private void joinObserve(String[] result) throws ResponseException {
         Join join;
+        Game game;
         if(Objects.equals(result[0], "join")){
             join = new Join(result[2],Integer.parseInt(result[1]));
+            game = server.join(join,authToken);
             System.out.println("You have successfully joined the game!");
         }else{
             join = new Join("WATCH",Integer.parseInt(result[1]));
+            game = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
-        Game game = server.join(join,authToken);
-        assert join != null;
         clientDrawChessBoard(game, join);
     }
 

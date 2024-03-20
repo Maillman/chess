@@ -1,3 +1,5 @@
+package client2server;
+
 import Model.*;
 import com.google.gson.Gson;
 

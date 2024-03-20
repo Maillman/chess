@@ -1,3 +1,5 @@
+package client2server;
+
 import Model.*;
 
 public class ServerFacade {
@@ -7,7 +9,7 @@ public class ServerFacade {
         conn = new ClientConnector(url);
     }
 
-    public Auth register(User user) throws ResponseException{
+    public Auth register(User user) throws ResponseException {
         var path = "/user";
         return conn.makeRequest("POST", path, user, Auth.class);
     }
