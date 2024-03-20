@@ -24,8 +24,10 @@ public class Client {
             printPrompt();
             String line = scanner.nextLine();
             try {
-                result = line.toLowerCase();
-                evaluate(result);
+                String[] splitResult = line.split(" ");
+                splitResult[0] = splitResult[0].toLowerCase();
+                evaluate(splitResult);
+                result = splitResult[0];
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.println(msg);
@@ -33,8 +35,8 @@ public class Client {
         }
     }
 
-    private void evaluate(String result) {
-        switch (result) {
+    private void evaluate(String[] result) {
+        switch (result[0]) {
             case "quit" -> {
                 System.out.println("You have exited the program!");
             }
@@ -54,73 +56,77 @@ public class Client {
                 }
                 if(!validCMD){
                     System.out.println("That is not a valid command!");
-                    evaluate("help");
+                    evaluate(new String[]{"help"});
                 }
             }
         }
     }
-    private boolean evalPreLogin(String result) {
+    private boolean evalPreLogin(String[] result) {
         try {
-            String[] resEval = result.split(" ");
-            switch (resEval[0]) {
+            boolean isSuccessful = true;
+            switch (result[0]) {
                 case "register" -> {
-                    if (resEval.length >= 4) {
-                        authToken = server.register(new User(resEval[1], resEval[2], resEval[3])).getAuthToken();
+                    if (result.length >= 4) {
+                        authToken = server.register(new User(result[1], result[2], result[3])).getAuthToken();
                         System.out.println("You have successfully registered and logged in!");
                         postLoginUI();
                     } else {
-                        System.out.println("Not enough arguments where expected (Expected 4, Got " + resEval.length + ").");
+                        System.out.println("Not enough arguments where expected (Expected 4, Got " + result.length + ").");
                         System.out.println("Register <USERNAME> <PASSWORD> <EMAIL>");
                     }
-                    return true;
                 }
                 case "login" -> {
-                    if (resEval.length >= 3) {
-                        authToken = server.login(new User(resEval[1], resEval[2], null)).getAuthToken();
+                    if (result.length >= 3) {
+                        authToken = server.login(new User(result[1], result[2], null)).getAuthToken();
                         System.out.println("You have successfully logged in!");
                         postLoginUI();
                     } else {
-                        System.out.println("Not enough arguments where expected (Expected 3, Got " + resEval.length + ").");
+                        System.out.println("Not enough arguments where expected (Expected 3, Got " + result.length + ").");
                         System.out.println("Login <USERNAME> <PASSWORD>");
                     }
-                    return true;
                 }
                 default -> {
-                    return false;
+                    isSuccessful = false;
                 }
             }
+            return isSuccessful;
         }catch(ResponseException re){
             System.out.println(re.getMessage());
-            evaluate("help");
+            evaluate(new String[]{"help"});
             return true;
         }
     }
-    private boolean evalPostLogin(String result){
+    private boolean evalPostLogin(String[] result){
         try {
-            String[] resEval = result.split(" ");
-            switch (resEval[0]) {
+            boolean isSuccessful = true;
+            switch (result[0]) {
+                case "logout" -> {
+                    server.logout(authToken);
+                    authToken = null;
+                    System.out.println("You have successfully logged out!");
+                    preLoginUI();
+                }
                 case "list" -> {
                     List<Game> games = server.list(authToken).getGames();
                     System.out.println(games.toString());
-                    return true;
                 }
                 case "create" -> {
-                    if (resEval.length >= 2) {
-                        Game game = server.create(new Game(null,null,null,resEval[1],new ChessGame()),authToken);
-                        System.out.println("The Game " + resEval[1] + " was created! It's ID is " + game.getGameID() + ".");
+                    if (result.length >= 2) {
+                        Game game = server.create(new Game(null,null,null,result[1],new ChessGame()),authToken);
+                        System.out.println("The Game " + result[1] + " was created! It's ID is " + game.getGameID() + ".");
                     } else {
-                        System.out.println("Not enough arguments where expected (Expected 2, Got " + resEval.length + ").");
+                        System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
                         System.out.println("Create <ID>");
                     }
-                    return true;
                 }
                 default -> {
-                    return false;
+                    isSuccessful = false;
                 }
             }
+            return isSuccessful;
         }catch(ResponseException re){
             System.out.println(re.getMessage());
-            evaluate("help");
+            evaluate(new String[]{"help"});
             return true;
         }
     }

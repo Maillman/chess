@@ -1,11 +1,4 @@
 import Model.*;
-import com.google.gson.Gson;
-
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class ServerFacade {
     private static ClientConnector conn;
@@ -22,6 +15,12 @@ public class ServerFacade {
     public Auth login(User user) throws ResponseException {
         var path = "/session";
         return conn.makeRequest("POST", path, user, Auth.class);
+    }
+
+    public void logout(String authToken) throws ResponseException {
+        var path = "/session";
+        conn.addRequestHeader(authToken);
+        conn.makeRequest("DELETE", path, null, null);
     }
 
     public Games list(String authToken) throws ResponseException {
