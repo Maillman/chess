@@ -13,7 +13,7 @@ import static ui.EscapeSequences.*;
 public class ChessBoardUI {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final int LINE_WIDTH_IN_CHARS = 1;
-    private static final String EMPTY = "   ";
+    //private static final String EMPTY = "   ";
     private static final String[] LETTERS = new String[]{"a","b","c","d","e","f","g","h"};
 
     public enum Perspective {
@@ -60,14 +60,14 @@ public class ChessBoardUI {
                         out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
                     }else{
                         //The letters
-                        out.print(" " + LETTERS[boardColumn-1] + " ");
+                        out.print("\u2009\u2002" + LETTERS[boardColumn-1] + "\u2002\u202F\u200A");
                     }
                 }else{
                     //Main stuff
                     if(boardColumn==0||boardColumn==9){
                         //The numbers
                         setOuter(out);
-                        out.print(" " + boardRow + " ");
+                        out.print("\u2009\u2002" + boardRow + "\u2002\u202F\u200A");
                     }else{
                         //Main board!
                         ChessPiece piece = theGame.getBoard().getPiece(new ChessPosition(boardRow,boardColumn));
@@ -82,15 +82,15 @@ public class ChessBoardUI {
                                 case BLACK -> setBlackPiece(out);
                             }
                             switch (piece.getPieceType()) {
-                                case BISHOP -> out.print(" B ");
-                                case ROOK -> out.print(" R ");
-                                case QUEEN -> out.print(" Q ");
-                                case KNIGHT -> out.print(" N ");
-                                case KING -> out.print(" K ");
-                                case PAWN -> out.print(" P ");
+                                case BISHOP -> out.print(BLACK_BISHOP);
+                                case ROOK -> out.print(BLACK_ROOK);
+                                case QUEEN -> out.print(BLACK_QUEEN);
+                                case KNIGHT -> out.print(BLACK_KNIGHT);
+                                case KING -> out.print(BLACK_KING);
+                                case PAWN -> out.print(BLACK_PAWN);
                             }
                         }else{
-                            out.print("   ");
+                            out.print(EMPTY);
                         }
                     }
                 }

@@ -44,6 +44,17 @@ public class Client {
     private void evaluate(String[] result) {
         switch (result[0]) {
             case "quit" -> {
+                if(authToken!=null){
+                    try {
+                        server.logout(authToken);
+                        authToken = null;
+                        System.out.println("You have successfully logged out!");
+                        System.out.println();
+                    }catch(ResponseException re){
+                        System.out.println(re.getMessage());
+                        evaluate(new String[]{"help"});
+                    }
+                }
                 System.out.println("You have exited the program!");
             }
             case "help" -> {
@@ -212,7 +223,7 @@ public class Client {
         System.out.println("List: Lists all of the games that currently exist in the server.");
         System.out.println("Create: <GAMENAME>: Creates a game of chess to join and play.");
         System.out.println("Join <ID> [WHITE|BLACK|<empty>]: Allows the ability to play (or observe if no color is specified) the specified game of chess.");
-        System.out.println("Observer <ID>: Allows the ability to observe the specified game of chess.");
+        System.out.println("Observe <ID>: Allows the ability to observe the specified game of chess.");
         System.out.println("Quit: Exit the program.");
     }
     private void printPrompt() {
