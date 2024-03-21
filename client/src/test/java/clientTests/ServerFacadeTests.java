@@ -2,6 +2,7 @@ package clientTests;
 
 import Model.*;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import client2server.ResponseException;
 import org.junit.jupiter.api.*;
@@ -40,6 +41,15 @@ public class ServerFacadeTests {
         facade.clear();
     }
 
+    @Test
+    void sendCrap() throws Exception {
+        Assertions.assertThrows(ResponseException.class, () -> facade.create(new Game(10,"White","Hello There","",new ChessGame(ChessGame.TeamColor.WHITE,new ChessBoard())),"authToken"));
+        Assertions.assertThrows(ResponseException.class, () -> facade.register(new User(null,null,null)));
+        Assertions.assertThrows(ResponseException.class, () -> facade.login(new User("Hackerman","Malware","StealData")));
+        Assertions.assertThrows(ResponseException.class, () -> facade.register(new User("Trying","CoolPassword",null)));
+        Assertions.assertThrows(ResponseException.class, () -> facade.logout("yuyfghnhgtygfewufewi"));
+        Assertions.assertThrows(ResponseException.class, () -> facade.join(new Join("WHITE",1000),"Familiar"));
+    }
     @Test
     void register() throws Exception {
         var authData = facade.register(new User("player1", "password", "p1@email.com"));
@@ -111,6 +121,26 @@ public class ServerFacadeTests {
         Assertions.assertEquals(theGames,facade.list(authData.getAuthToken()),"The list of games is different than expected");
     }
 
+    @Test
+    void joinWithoutAuthentication() throws Exception {
+        var authData = facade.register(user);
+        Assertions.assertTrue(authData.getAuthToken().length() > 10);
+        Game aGame = new Game(1,null,null,"anotherGame",new ChessGame());
+        facade.create(aGame,authData.getAuthToken());
+        Join join = new Join("WHITE",1);
+        facade.logout(authData.getAuthToken());
+        Assertions.assertThrows(ResponseException.class, () -> facade.join(join, authData.getAuthToken()));
+    }
+
+    @Test
+    void joinOutOfRange() throws Exception {
+        var authData = facade.register(user);
+        Assertions.assertTrue(authData.getAuthToken().length() > 10);
+        Game aGame = new Game(1,null,null,"anotherGame",new ChessGame());
+        facade.create(aGame,authData.getAuthToken());
+        Join join = new Join("WHITE",16796893);
+        Assertions.assertThrows(ResponseException.class, () -> facade.join(join,authData.getAuthToken()));
+    }
     @Test
     void joinWhiteTwice() throws Exception {
         var authData = facade.register(user);
