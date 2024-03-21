@@ -42,6 +42,7 @@ public class ChessBoardUI {
     }
 
     public static void drawChessBoard(PrintStream out, ChessGame theGame, Perspective perspective) {
+        System.out.println("The Board:");
         int boardRow, boardColumn;
         if (perspective== Perspective.BLACK) {
             boardRow = 0;

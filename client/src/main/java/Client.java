@@ -125,7 +125,7 @@ public class Client {
                 }
                 case "list" -> {
                     List<Game> games = server.list(authToken).getGames();
-                    System.out.println(games.toString());
+                    listGames(games);
                 }
                 case "create" -> {
                     if (result.length >= 2) {
@@ -139,8 +139,11 @@ public class Client {
                 case "join" -> {
                     if (result.length >= 3) {
                         joinObserve(result);
+                    }else if(result.length == 2){
+                        result[0] = "observe";
+                        joinObserve(result);
                     }else{
-                        System.out.println("Not enough arguments where expected (Expected 3, Got " + result.length + ").");
+                        System.out.println("Not enough arguments where expected (Expected 3 (or 2 if observing), Got " + result.length + ").");
                         System.out.println("Join <ID> [WHITE|BLACK|<empty>]");
                     }
                 }
@@ -161,6 +164,20 @@ public class Client {
             System.out.println(re.getMessage());
             evaluate(new String[]{"help"});
             return true;
+        }
+    }
+
+    private void listGames(List<Game> games){
+        System.out.println("Here are the List of Games!");
+        for (Game selGame : games) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_YELLOW);
+            System.out.println("Game ID: " + selGame.getGameID());
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+            System.out.println("Game Name: " + selGame.getGameName());
+            System.out.println("White Player: " + selGame.getWhiteUsername() + ", Black Player: " + selGame.getBlackUsername());
+            clientDrawChessBoard(selGame, new Join("WHITE", selGame.getGameID()));
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+            System.out.println();
         }
     }
 
