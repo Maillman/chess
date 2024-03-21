@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Games {
     private final List<Game> games;
@@ -18,5 +19,17 @@ public class Games {
         return "Games{" +
                 "games=" + games +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Games games1)) return false;
+        return Objects.equals(getGames(), games1.getGames());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getGames());
     }
 }
