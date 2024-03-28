@@ -198,20 +198,16 @@ public class Client {
 
     private void clientDrawChessBoard(Game game, Join join) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoardUI.Perspective persp, otherpersp;
+        ChessBoardUI.Perspective persp;
 
         if(Objects.equals(join.getPlayerColor(), "WHITE")){
             persp = WHITE;
-            otherpersp = BLACK;
         }else if(Objects.equals(join.getPlayerColor(), "BLACK")){
             persp = BLACK;
-            otherpersp = WHITE;
         }else{
             persp = WATCH;
-            otherpersp = BLACK;
         }
         ChessBoardUI.drawChessBoard(out,game.getGame(),persp);
-        ChessBoardUI.drawChessBoard(out,game.getGame(),otherpersp);
     }
 
     private void postLoginUI() {

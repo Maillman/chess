@@ -1,6 +1,5 @@
 package client2server;
 
-import Model.*;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -11,10 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-public class ClientConnector {
+public class HTTPCommunicator {
     private final String serverURL;
     private static String requestHeader;
-    public ClientConnector(String url) {
+    public HTTPCommunicator(String url) {
         serverURL = url;
     }
     public void addRequestHeader(String reqHeader){

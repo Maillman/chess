@@ -3,10 +3,10 @@ package client2server;
 import Model.*;
 
 public class ServerFacade {
-    private static ClientConnector conn;
+    private static HTTPCommunicator conn;
 
     public ServerFacade(String url){
-        conn = new ClientConnector(url);
+        conn = new HTTPCommunicator(url);
     }
 
     public Auth register(User user) throws ResponseException {
