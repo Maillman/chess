@@ -209,6 +209,11 @@ public class Client {
         }
         ChessBoardUI.drawChessBoard(out,game.getGame(),persp);
     }
+    private void gameplayUI() {
+        uiPreHelper();
+        helpGameplay();
+        uiPostHelper();
+    }
 
     private void postLoginUI() {
         uiPreHelper();
@@ -243,6 +248,14 @@ public class Client {
         System.out.println("Join <ID> [WHITE|BLACK|<empty>]: Allows the ability to play (or observe if no color is specified) the specified game of chess.");
         System.out.println("Observe <ID>: Allows the ability to observe the specified game of chess.");
         System.out.println("Quit: Exit the program.");
+    }
+    private void helpGameplay(){
+        System.out.println("Help: List possible commands.");
+        System.out.println("Redraw: Redraws the chess board.");
+        System.out.println("Leave: Leave the current game.");
+        System.out.println("Move <CHESSMOVE>: Make a move in the current game, moving a piece from starting position to ending position (E.G.: 'Make Move e4e6'");
+        System.out.println("Resign: Forfeit the game (The game will immediately end!).");
+        System.out.println("Highlight <CHESSPOSITION>: Highlights all the legal moves of the chess piece at the chosen chess position.");
     }
     private void printPrompt() {
         System.out.print("\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + " >>> " + EscapeSequences.SET_TEXT_COLOR_WHITE);
