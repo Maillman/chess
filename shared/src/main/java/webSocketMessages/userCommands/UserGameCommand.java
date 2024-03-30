@@ -26,6 +26,10 @@ public class UserGameCommand {
 
     private final String authToken;
 
+    public void setCommandType(CommandType commandtype){
+        this.commandType = commandtype;
+    }
+
     public String getAuthString() {
         return authToken;
     }

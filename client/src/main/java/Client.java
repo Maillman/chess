@@ -8,16 +8,24 @@ import Model.*;
 import chess.ChessGame;
 import client2server.ResponseException;
 import client2server.ServerFacade;
+import client2server.ServerMessageObserver;
 import ui.*;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import static ui.ChessBoardUI.Perspective.*;
 
-public class Client {
-    private final ServerFacade server;
+public class Client implements ServerMessageObserver {
+    private ServerFacade server;
     private String authToken = null;
 
-    public Client(String serverURL){
-        server = new ServerFacade(serverURL);
+    public Client(String serverURL) {
+        try {
+            server = new ServerFacade(serverURL, this);
+        }catch(ResponseException re) {
+            System.out.println("An error with WebSocket has occurred:");
+            System.out.println(re.getMessage());
+            server = new ServerFacade(serverURL);
+        }
     }
 
     public void run(){
@@ -259,5 +267,11 @@ public class Client {
     }
     private void printPrompt() {
         System.out.print("\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + " >>> " + EscapeSequences.SET_TEXT_COLOR_WHITE);
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.toString());
+        printPrompt();
     }
 }

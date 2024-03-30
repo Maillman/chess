@@ -1,12 +1,23 @@
 package client2server;
 
 import Model.*;
+import com.google.gson.Gson;
+import webSocketMessages.userCommands.UserGameCommand;
+
+import java.io.IOException;
 
 public class ServerFacade {
     private static HTTPCommunicator conn;
+    private final WebSocketCommunicator ws;
 
     public ServerFacade(String url){
         conn = new HTTPCommunicator(url);
+        ws = null;
+    }
+
+    public ServerFacade(String url, ServerMessageObserver smo) throws ResponseException {
+        conn = new HTTPCommunicator(url);
+        ws = new WebSocketCommunicator(url,smo);
     }
 
     public Auth register(User user) throws ResponseException {
@@ -40,11 +51,30 @@ public class ServerFacade {
     public Game join(Join join, String authToken) throws ResponseException {
         var path = "/game";
         conn.addRequestHeader(authToken);
-        return conn.makeRequest("PUT", path, join, Game.class);
+        var game = conn.makeRequest("PUT", path, join, Game.class);
+        if(ws!=null) {
+            wsJoin(join, authToken);
+        }
+        return game;
     }
 
     public void clear() throws ResponseException {
         var path = "/db";
         conn.makeRequest("DELETE", path, null, null);
+    }
+
+    private void wsJoin(Join join, String authToken) throws ResponseException {
+        try {
+            var userGameCommand = new UserGameCommand(authToken);
+            if (join.getPlayerColor() == null) {
+                userGameCommand.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
+            } else {
+                userGameCommand.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
+            }
+            assert ws != null;
+            ws.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        }catch(IOException ioe){
+            throw new ResponseException(500, ioe.getMessage());
+        }
     }
 }
