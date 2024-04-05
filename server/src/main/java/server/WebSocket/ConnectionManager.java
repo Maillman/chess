@@ -19,6 +19,10 @@ public class ConnectionManager {
         connections.remove(userName);
     }
 
+    public void displayGame(String UserName, ServerMessage loadGame) throws IOException {
+        var connection = connections.get(UserName);
+        connection.send(loadGame.toString());
+    }
     public void broadcast(String excludeUserName, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {

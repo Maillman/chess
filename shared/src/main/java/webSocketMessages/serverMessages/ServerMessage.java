@@ -1,5 +1,6 @@
 package webSocketMessages.serverMessages;
 
+import Model.Game;
 import com.google.gson.Gson;
 
 import java.util.Objects;
@@ -14,6 +15,16 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
 
     String message;
+
+    Game game;
+
+    public void addGame(Game game) {
+        this.game = game;
+    }
+
+    public Game getGame() {
+        return game;
+    }
 
     public enum ServerMessageType {
         LOAD_GAME,

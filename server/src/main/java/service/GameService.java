@@ -3,6 +3,7 @@ package service;
 import Model.Auth;
 import Model.Join;
 import Model.Game;
+import chess.ChessGame;
 import dataAccess.*;
 
 import java.util.List;
@@ -18,6 +19,10 @@ public class GameService {
 
     public Game createGame(String authToken, Game game) throws DataAccessException {
         checkAuthToken(authToken);
+        //We don't want a game that doesn't exist where we can't get a board.
+        if(game.getGame()==null){
+            game = new Game(game.getGameID(),game.getWhiteUsername(),game.getBlackUsername(),game.getGameName(), new ChessGame());
+        }
         return gameDAO.createGame(game);
     }
 
@@ -50,5 +55,9 @@ public class GameService {
         if(authDAO.getAuth(authToken)==null){
             throw new DataAccessException("Unauthorized!");
         }
+    }
+
+    public Game getGame(int gameID) throws DataAccessException{
+        return gameDAO.getGame(gameID);
     }
 }

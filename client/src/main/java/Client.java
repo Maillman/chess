@@ -18,6 +18,8 @@ public class Client implements ServerMessageObserver {
     private ServerFacade server;
     private String authToken = null;
 
+    private ChessBoardUI.Perspective persp;
+
     public Client(String serverURL) {
         try {
             server = new ServerFacade(serverURL, this);
@@ -183,7 +185,10 @@ public class Client implements ServerMessageObserver {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
             System.out.println("Game Name: " + selGame.getGameName());
             System.out.println("White Player: " + selGame.getWhiteUsername() + ", Black Player: " + selGame.getBlackUsername());
-            clientDrawChessBoard(selGame, new Join("WHITE", selGame.getGameID()));
+            ChessBoardUI.Perspective holdPersp = persp;
+            persp = WHITE;
+            clientDrawChessBoard(selGame);
+            persp = holdPersp;
             System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
             System.out.println();
         }
@@ -201,13 +206,6 @@ public class Client implements ServerMessageObserver {
             game = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
-        clientDrawChessBoard(game, join);
-    }
-
-    private void clientDrawChessBoard(Game game, Join join) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoardUI.Perspective persp;
-
         if(Objects.equals(join.getPlayerColor(), "WHITE")){
             persp = WHITE;
         }else if(Objects.equals(join.getPlayerColor(), "BLACK")){
@@ -215,7 +213,12 @@ public class Client implements ServerMessageObserver {
         }else{
             persp = WATCH;
         }
-        ChessBoardUI.drawChessBoard(out,game.getGame(),persp);
+        //clientDrawChessBoard(game);
+    }
+
+    private void clientDrawChessBoard(Game game) {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        ChessBoardUI.drawChessBoard(out,game.getGame(), persp);
     }
     private void gameplayUI() {
         uiPreHelper();
@@ -252,7 +255,7 @@ public class Client implements ServerMessageObserver {
         System.out.println("Help: List possible commands.");
         System.out.println("Logout: Log out of the server.");
         System.out.println("List: Lists all of the games that currently exist in the server.");
-        System.out.println("Create: <GAMENAME>: Creates a game of chess to join and play.");
+        System.out.println("Create <GAMENAME>: Creates a game of chess to join and play.");
         System.out.println("Join <ID> [WHITE|BLACK|<empty>]: Allows the ability to play (or observe if no color is specified) the specified game of chess.");
         System.out.println("Observe <ID>: Allows the ability to observe the specified game of chess.");
         System.out.println("Quit: Exit the program.");
@@ -273,6 +276,8 @@ public class Client implements ServerMessageObserver {
     public void notify(ServerMessage message) {
         if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
+        }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            clientDrawChessBoard(message.getGame());
         }
         printPrompt();
     }
