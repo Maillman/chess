@@ -71,6 +71,8 @@ public class ServerFacade {
             } else {
                 userGameCommand.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
             }
+            userGameCommand.setJoinColor(join.getPlayerColor());
+            userGameCommand.setGameID(join.getGameID());
             assert ws != null;
             ws.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         }catch(IOException ioe){

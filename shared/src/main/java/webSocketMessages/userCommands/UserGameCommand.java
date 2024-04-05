@@ -38,6 +38,24 @@ public class UserGameCommand {
         return this.commandType;
     }
 
+    public int getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+    private String joinColor;
+    private int gameID;
+
+    public void setJoinColor(String color){
+        joinColor = color;
+    }
+
+    public String getJoinColor() {
+        return joinColor;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

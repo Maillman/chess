@@ -59,4 +59,8 @@ public class UserService {
             throw new DataAccessException("Unauthorized!");
         }
     }
+
+    public Auth verifyUser(String authToken) throws DataAccessException{
+        return authDAO.getAuth(authToken);
+    }
 }

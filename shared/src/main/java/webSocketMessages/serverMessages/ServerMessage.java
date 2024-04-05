@@ -33,6 +33,10 @@ public class ServerMessage {
         this.message = message;
     }
 
+    public String getMessage(){
+        return message;
+    }
+
     @Override
     public String toString() {
         return new Gson().toJson(this);

@@ -197,7 +197,7 @@ public class Client implements ServerMessageObserver {
             game = server.join(join,authToken);
             System.out.println("You have successfully joined the game!");
         }else{
-            join = new Join("WATCH",Integer.parseInt(result[1]));
+            join = new Join("OBSERVER",Integer.parseInt(result[1]));
             game = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
@@ -271,7 +271,9 @@ public class Client implements ServerMessageObserver {
 
     @Override
     public void notify(ServerMessage message) {
-        System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.toString());
+        if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
+        }
         printPrompt();
     }
 }

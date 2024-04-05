@@ -23,14 +23,14 @@ public class Server {
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
 
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(userService,gameService);
     }
     public Server(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
 
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(userService,gameService);
     }
 
     public int run(int desiredPort) {
