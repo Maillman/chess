@@ -2,6 +2,7 @@ package client2server;
 
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -36,4 +37,15 @@ public class WebSocketCommunicator extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+    /*
+    public void joinGame(String authToken) throws ResponseException {
+        try {
+            var action = new UserGameCommand(authToken);
+            action.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        }catch(IOException ioe){
+            throw new ResponseException(500, ioe.getMessage());
+        }
+    }
+     */
 }

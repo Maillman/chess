@@ -38,6 +38,8 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/connect", webSocketHandler);
+
         // Register your endpoints and handle exceptions here.
         Spark.get("/", (req, res) -> "Hello, Chess Server!");
         Spark.delete("/db", this::clear);

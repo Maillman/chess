@@ -1,6 +1,7 @@
 package server.WebSocket;
 
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -23,6 +24,16 @@ public class WebSocketHandler {
         connections.add(authToken,session);
         var message = String.format("%s has joined the game.",authToken);
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        serverMessage.addMessage(message);
         connections.broadcast(authToken, serverMessage);
     }
+    /*
+    public void announce(String userName) throws DataAccessException {
+        try {
+
+        }catch(Exception e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+     */
 }
