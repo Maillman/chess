@@ -1,14 +1,12 @@
-package client2server.WebSocket;
+package server.WebSocket;
 
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
-import java.util.Timer;
 
 @WebSocket
 public class WebSocketHandler {

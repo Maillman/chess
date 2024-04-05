@@ -3,12 +3,14 @@ package server;
 import Model.*;
 import com.google.gson.Gson;
 import dataAccess.*;
+import server.WebSocket.WebSocketHandler;
 import service.ClearService;
 import service.UserService;
 import service.GameService;
 import spark.*;
 
 public class Server {
+    private final WebSocketHandler webSocketHandler;
     private final UserService userService;
     private final ClearService clearService;
     private final GameService gameService;
@@ -20,11 +22,15 @@ public class Server {
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
+
+        webSocketHandler = new WebSocketHandler();
     }
     public Server(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
         userService = new UserService(userDAO, authDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
+
+        webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
