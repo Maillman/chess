@@ -17,6 +17,7 @@ import static ui.ChessBoardUI.Perspective.*;
 public class Client implements ServerMessageObserver {
     private ServerFacade server;
     private String authToken = null;
+    private Game curGame = null;
 
     private ChessBoardUI.Perspective persp;
 
@@ -71,7 +72,11 @@ public class Client implements ServerMessageObserver {
                 if(authToken==null) {
                     preLoginUI();
                 }else{
-                    postLoginUI();
+                    if(curGame==null){
+                        postLoginUI();
+                    }else{
+                        gameplayUI();
+                    }
                 }
             }
             default -> {
@@ -79,7 +84,11 @@ public class Client implements ServerMessageObserver {
                 if(authToken==null){
                     validCMD = evalPreLogin(result);
                 }else{
-                    validCMD = evalPostLogin(result);
+                    if(curGame==null) {
+                        validCMD = evalPostLogin(result);
+                    }else{
+                        validCMD = evalGameplay(result);
+                    }
                 }
                 if(!validCMD){
                     System.out.println("That is not a valid command!");
@@ -164,6 +173,29 @@ public class Client implements ServerMessageObserver {
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
                         System.out.println("Observe <ID>");
                     }
+                }
+                default -> {
+                    isSuccessful = false;
+                }
+            }
+            return isSuccessful;
+        }catch(ResponseException re){
+            System.out.println(re.getMessage());
+            evaluate(new String[]{"help"});
+            return true;
+        }
+    }
+    private boolean evalGameplay(String[] result) {
+        try {
+            boolean isSuccessful = true;
+            switch (result[0]) {
+                case "redraw" -> {
+                    clientDrawChessBoard(curGame);
+                }
+                case "leave" -> {
+                    server.leave(authToken);
+                    curGame = null;
+                    System.out.println("You have successfully left the game.");
                 }
                 default -> {
                     isSuccessful = false;
@@ -277,7 +309,8 @@ public class Client implements ServerMessageObserver {
         if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-            clientDrawChessBoard(message.getGame());
+            curGame = message.getGame();
+            clientDrawChessBoard(curGame);
         }
         printPrompt();
     }
