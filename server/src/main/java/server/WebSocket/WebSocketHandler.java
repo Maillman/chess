@@ -35,18 +35,33 @@ public class WebSocketHandler {
                 Game game = gameService.getGame(gameID);
                 join(auth, session, joinColor, game);
             }
+            case LEAVE -> {
+                int gameID = userGameCommand.getGameID();
+                Game game = gameService.getGame(gameID);
+                leave(auth, gameID);
+            }
         }
+    }
+
+    private void leave(Auth auth, Integer gameID) throws IOException {
+        String username = auth.getUsername();
+        String authToken = auth.getAuthToken();
+        connections.remove(authToken, gameID);
+        var message = String.format("%s has left the game.",username);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        serverMessage.addMessage(message);
+        connections.broadcast(authToken, gameID, serverMessage);
     }
 
     private void join(Auth auth, Session session, String joinColor, Game game) throws IOException {
         String username = auth.getUsername();
         String authToken = auth.getAuthToken();
-        connections.add(authToken, session);
+        connections.add(authToken, game.getGameID(), session);
         var message = String.format("%s has joined the game as %s.",username, joinColor);
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var displayMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         serverMessage.addMessage(message);
-        connections.broadcast(authToken, serverMessage);
+        connections.broadcast(authToken, game.getGameID(), serverMessage);
         displayMessage.addGame(game);
         connections.displayGame(authToken, displayMessage);
     }

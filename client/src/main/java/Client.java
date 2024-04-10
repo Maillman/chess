@@ -193,7 +193,7 @@ public class Client implements ServerMessageObserver {
                     clientDrawChessBoard(curGame);
                 }
                 case "leave" -> {
-                    server.leave(authToken);
+                    server.leave(curGame.getGameID(), authToken);
                     curGame = null;
                     System.out.println("You have successfully left the game.");
                 }

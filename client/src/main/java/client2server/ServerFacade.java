@@ -63,11 +63,12 @@ public class ServerFacade {
         conn.makeRequest("DELETE", path, null, null);
     }
 
-    public void leave(String authToken) throws ResponseException {
+    public void leave(Integer gameID, String authToken) throws ResponseException {
         try{
             if(ws!=null) {
                 var userGameCommand = new UserGameCommand(authToken);
                 userGameCommand.setCommandType(UserGameCommand.CommandType.LEAVE);
+                userGameCommand.setGameID(gameID);
                 ws.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
             }
         }catch(IOException ioe){

@@ -5,30 +5,36 @@ import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Integer> activeGames = new ConcurrentHashMap<>();
 
-    public void add(String userName, Session session) {
-        var connection = new Connection(userName, session);
-        connections.put(userName, connection);
+    public void add(String authToken, Integer gameID, Session session) {
+        var connection = new Connection(authToken, session);
+        connections.put(authToken, connection);
+        activeGames.put(authToken, gameID);
     }
 
-    public void remove(String userName) {
-        connections.remove(userName);
+    public void remove(String authToken, Integer gameID) {
+        connections.remove(authToken);
+        activeGames.remove(authToken, gameID);
     }
 
-    public void displayGame(String UserName, ServerMessage loadGame) throws IOException {
-        var connection = connections.get(UserName);
+    public void displayGame(String authToken, ServerMessage loadGame) throws IOException {
+        var connection = connections.get(authToken);
         connection.send(loadGame.toString());
     }
-    public void broadcast(String excludeUserName, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeAuthToken, Integer gameID, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.userName.equals(excludeUserName)) {
-                    c.send(notification.toString());
+                if (!c.authToken.equals(excludeAuthToken)) {
+                    if(Objects.equals(activeGames.get(c.authToken), gameID)) {
+                        c.send(notification.toString());
+                    }
                 }
             } else {
                 removeList.add(c);
@@ -37,7 +43,7 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.userName);
+            connections.remove(c.authToken);
         }
     }
 }
