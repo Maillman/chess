@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 import Model.*;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import client2server.ResponseException;
 import client2server.ServerFacade;
 import client2server.ServerMessageObserver;
@@ -57,6 +59,11 @@ public class Client implements ServerMessageObserver {
             case "quit" -> {
                 if(authToken!=null){
                     try {
+                        if(curGame!=null) {
+                            server.leave(curGame.getGameID(), authToken);
+                            curGame = null;
+                            System.out.println("You have successfully left the game.");
+                        }
                         server.logout(authToken);
                         authToken = null;
                         System.out.println("You have successfully logged out!");
@@ -197,6 +204,14 @@ public class Client implements ServerMessageObserver {
                     curGame = null;
                     System.out.println("You have successfully left the game.");
                 }
+                case "move" -> {
+                    if(result.length >= 2){
+                        char[] move = result[1].toCharArray();
+                    }else{
+                        System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
+                        System.out.println("Move <CHESSMOVE>");
+                    }
+                }
                 default -> {
                     isSuccessful = false;
                 }
@@ -207,6 +222,31 @@ public class Client implements ServerMessageObserver {
             evaluate(new String[]{"help"});
             return true;
         }
+    }
+
+    private ChessMove evalMove(char[] moveInChars){
+        char[] possibleColMoves = new char[]{'a','b','c','d','e','f','g','h'};
+        char[] possibleRowMoves = new char[]{'1','2','3','4','5','6','7','8'};
+        ChessPosition startPos = null, endPos = null;
+        int row = 0, col = 0;
+        for(int j = 0; j < 2; j++) {
+            for (int i = 0; i < possibleColMoves.length; i++) {
+                if (possibleColMoves[i] == moveInChars[2*j]) {
+                    col = i;
+                }
+            }
+            for (int i = 0; i < possibleRowMoves.length; i++) {
+                if (possibleRowMoves[i] == moveInChars[2*j+1]) {
+                    row = i;
+                }
+            }
+            if(j==1) {
+                startPos = new ChessPosition(row, col);
+            }else{
+                endPos = new ChessPosition(row, col);
+            }
+        }
+        return new ChessMove(startPos,endPos);
     }
 
     private void listGames(List<Game> games){
@@ -228,14 +268,14 @@ public class Client implements ServerMessageObserver {
 
     private void joinObserve(String[] result) throws ResponseException {
         Join join;
-        Game game;
+        //Game game;
         if(Objects.equals(result[0], "join")){
             join = new Join(result[2],Integer.parseInt(result[1]));
-            game = server.join(join,authToken);
+            //game = server.join(join,authToken);
             System.out.println("You have successfully joined the game!");
         }else{
             join = new Join("OBSERVER",Integer.parseInt(result[1]));
-            game = server.join(join,authToken);
+            //game = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
         if(Objects.equals(join.getPlayerColor(), "WHITE")){
@@ -299,6 +339,7 @@ public class Client implements ServerMessageObserver {
         System.out.println("Move <CHESSMOVE>: Make a move in the current game, moving a piece from starting position to ending position (E.G.: 'Make Move e4e6'");
         System.out.println("Resign: Forfeit the game (The game will immediately end!).");
         System.out.println("Highlight <CHESSPOSITION>: Highlights all the legal moves of the chess piece at the chosen chess position.");
+        System.out.println("Quit: Exit the program.");
     }
     private void printPrompt() {
         System.out.print("\n" + EscapeSequences.SET_TEXT_COLOR_GREEN + " >>> " + EscapeSequences.SET_TEXT_COLOR_WHITE);
