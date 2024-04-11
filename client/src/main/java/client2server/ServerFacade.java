@@ -1,6 +1,7 @@
 package client2server;
 
 import Model.*;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -69,6 +70,19 @@ public class ServerFacade {
                 var userGameCommand = new UserGameCommand(authToken);
                 userGameCommand.setCommandType(UserGameCommand.CommandType.LEAVE);
                 userGameCommand.setGameID(gameID);
+                ws.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+            }
+        }catch(IOException ioe){
+            throw new ResponseException(500, ioe.getMessage());
+        }
+    }
+    public void move(Integer gameID, ChessMove chessMove, String authToken) throws ResponseException{
+        try {
+            if(ws!=null) {
+                var userGameCommand = new UserGameCommand(authToken);
+                userGameCommand.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
+                userGameCommand.setGameID(gameID);
+                userGameCommand.setMove(chessMove);
                 ws.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
             }
         }catch(IOException ioe){

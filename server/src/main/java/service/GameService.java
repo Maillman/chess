@@ -60,4 +60,20 @@ public class GameService {
     public Game getGame(int gameID) throws DataAccessException{
         return gameDAO.getGame(gameID);
     }
+
+    public Game updateGame(String authToken, int gameID, Game updatedGame) throws DataAccessException{
+        Auth auth = authDAO.getAuth(authToken);
+        if(auth!=null){
+            Game foundGame = gameDAO.getGame(gameID);
+            if(Objects.equals(foundGame.getWhiteUsername(), auth.getUsername())&&updatedGame.getGame().getTeamTurn() == ChessGame.TeamColor.BLACK){
+                return gameDAO.updateGame(auth.getUsername(),foundGame.getGameID(), "WHITE",updatedGame);
+            }else if(Objects.equals(foundGame.getBlackUsername(), auth.getUsername())&&updatedGame.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE){
+                return gameDAO.updateGame(auth.getUsername(),foundGame.getGameID(), "BLACK",updatedGame);
+            }else{
+                throw new DataAccessException("Unauthorized!");
+            }
+        }else{
+            throw new DataAccessException("Unauthorized!");
+        }
+    }
 }

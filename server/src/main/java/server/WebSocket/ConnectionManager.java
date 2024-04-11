@@ -23,11 +23,11 @@ public class ConnectionManager {
         activeGames.remove(authToken, gameID);
     }
 
-    public void displayGame(String authToken, ServerMessage loadGame) throws IOException {
+    public void displayRoot(String authToken, ServerMessage loadRoot) throws IOException {
         var connection = connections.get(authToken);
-        connection.send(loadGame.toString());
+        connection.send(loadRoot.toString());
     }
-    public void broadcast(String excludeAuthToken, Integer gameID, ServerMessage notification) throws IOException {
+    public void broadcastNotification(String excludeAuthToken, Integer gameID, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
@@ -35,6 +35,25 @@ public class ConnectionManager {
                     if(Objects.equals(activeGames.get(c.authToken), gameID)) {
                         c.send(notification.toString());
                     }
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.authToken);
+        }
+    }
+
+    public void broadcastGame(ServerMessage loadGame) throws IOException{
+        Integer gameID = loadGame.getGame().getGameID();
+        var removeList = new ArrayList<Connection>();
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (Objects.equals(activeGames.get(c.authToken), gameID)) {
+                    c.send(loadGame.toString());
                 }
             } else {
                 removeList.add(c);

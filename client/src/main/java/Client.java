@@ -1,5 +1,6 @@
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -8,6 +9,7 @@ import Model.*;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.InvalidMoveException;
 import client2server.ResponseException;
 import client2server.ServerFacade;
 import client2server.ServerMessageObserver;
@@ -159,7 +161,7 @@ public class Client implements ServerMessageObserver {
                         System.out.println("The Game " + result[1] + " was created! It's ID is " + game.getGameID() + ".");
                     } else {
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
-                        System.out.println("Create <ID>");
+                        System.out.println("Create <GAMENAME>");
                     }
                 }
                 case "join" -> {
@@ -207,6 +209,12 @@ public class Client implements ServerMessageObserver {
                 case "move" -> {
                     if(result.length >= 2){
                         char[] move = result[1].toCharArray();
+                        try {
+                            curGame.getGame().makeMove(evalMove(move));
+                            server.move(curGame.getGameID(), evalMove(move), authToken);
+                        }catch(InvalidMoveException ime){
+                            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + ime.getMessage());
+                        }
                     }else{
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
                         System.out.println("Move <CHESSMOVE>");
@@ -232,15 +240,15 @@ public class Client implements ServerMessageObserver {
         for(int j = 0; j < 2; j++) {
             for (int i = 0; i < possibleColMoves.length; i++) {
                 if (possibleColMoves[i] == moveInChars[2*j]) {
-                    col = i;
+                    col = i+1;
                 }
             }
             for (int i = 0; i < possibleRowMoves.length; i++) {
                 if (possibleRowMoves[i] == moveInChars[2*j+1]) {
-                    row = i;
+                    row = i+1;
                 }
             }
-            if(j==1) {
+            if(j==0) {
                 startPos = new ChessPosition(row, col);
             }else{
                 endPos = new ChessPosition(row, col);
@@ -268,14 +276,14 @@ public class Client implements ServerMessageObserver {
 
     private void joinObserve(String[] result) throws ResponseException {
         Join join;
-        //Game game;
+        Game game;
         if(Objects.equals(result[0], "join")){
             join = new Join(result[2],Integer.parseInt(result[1]));
-            //game = server.join(join,authToken);
+            game = server.join(join,authToken);
             System.out.println("You have successfully joined the game!");
         }else{
             join = new Join("OBSERVER",Integer.parseInt(result[1]));
-            //game = server.join(join,authToken);
+            game = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
         if(Objects.equals(join.getPlayerColor(), "WHITE")){
@@ -336,7 +344,7 @@ public class Client implements ServerMessageObserver {
         System.out.println("Help: List possible commands.");
         System.out.println("Redraw: Redraws the chess board.");
         System.out.println("Leave: Leave the current game.");
-        System.out.println("Move <CHESSMOVE>: Make a move in the current game, moving a piece from starting position to ending position (E.G.: 'Make Move e4e6'");
+        System.out.println("Move <CHESSMOVE>: Make a move in the current game, moving a piece from starting position to ending position (E.G.: 'Move e4e6'");
         System.out.println("Resign: Forfeit the game (The game will immediately end!).");
         System.out.println("Highlight <CHESSPOSITION>: Highlights all the legal moves of the chess piece at the chosen chess position.");
         System.out.println("Quit: Exit the program.");
@@ -352,6 +360,8 @@ public class Client implements ServerMessageObserver {
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             curGame = message.getGame();
             clientDrawChessBoard(curGame);
+        }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
         }
         printPrompt();
     }

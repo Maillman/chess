@@ -1,5 +1,7 @@
 package webSocketMessages.userCommands;
 
+import chess.ChessMove;
+
 import java.util.Objects;
 
 /**
@@ -55,6 +57,16 @@ public class UserGameCommand {
     public String getJoinColor() {
         return joinColor;
     }
+
+    public ChessMove getMove() {
+        return move;
+    }
+
+    public void setMove(ChessMove move) {
+        this.move = move;
+    }
+
+    private ChessMove move;
 
     @Override
     public boolean equals(Object o) {
