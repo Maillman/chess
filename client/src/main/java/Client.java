@@ -1,6 +1,5 @@
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -62,7 +61,7 @@ public class Client implements ServerMessageObserver {
                 if(authToken!=null){
                     try {
                         if(curGame!=null) {
-                            server.leave(curGame.getGameID(), authToken);
+                            server.leaveResign(curGame.getGameID(), false, authToken);
                             curGame = null;
                             System.out.println("You have successfully left the game.");
                         }
@@ -202,7 +201,7 @@ public class Client implements ServerMessageObserver {
                     clientDrawChessBoard(curGame);
                 }
                 case "leave" -> {
-                    server.leave(curGame.getGameID(), authToken);
+                    server.leaveResign(curGame.getGameID(), false, authToken);
                     curGame = null;
                     System.out.println("You have successfully left the game.");
                 }
@@ -219,6 +218,9 @@ public class Client implements ServerMessageObserver {
                         System.out.println("Not enough arguments where expected (Expected 2, Got " + result.length + ").");
                         System.out.println("Move <CHESSMOVE>");
                     }
+                }
+                case "resign" -> {
+                    server.leaveResign(curGame.getGameID(), true, authToken);
                 }
                 default -> {
                     isSuccessful = false;
@@ -360,6 +362,7 @@ public class Client implements ServerMessageObserver {
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             curGame = message.getGame();
             clientDrawChessBoard(curGame);
+            gameplayUI();
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
             System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
         }

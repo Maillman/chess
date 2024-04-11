@@ -3,9 +3,7 @@ package server.WebSocket;
 import Model.Auth;
 import Model.Game;
 import chess.ChessMove;
-import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import service.GameService;
@@ -14,6 +12,7 @@ import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -27,35 +26,55 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
-        UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
-        Auth auth = userService.verifyUser(userGameCommand.getAuthString());
-        switch (userGameCommand.getCommandType()){
-            case JOIN_PLAYER, JOIN_OBSERVER -> {
-                String joinColor = userGameCommand.getJoinColor();
-                int gameID = userGameCommand.getGameID();
-                Game game = gameService.getGame(gameID);
-                join(auth, session, joinColor, game);
-            }
-            case LEAVE -> {
-                int gameID = userGameCommand.getGameID();
-                Game game = gameService.getGame(gameID);
-                leave(auth, gameID);
-            }
-            case MAKE_MOVE -> {
-                int gameID = userGameCommand.getGameID();
-                ChessMove chessMove = userGameCommand.getMove();
-                Game foundGame = gameService.getGame(gameID);
-                String chessPiece = foundGame.getGame().getBoard().getPiece(chessMove.getStartPosition()).toString();
-                try{
-                    foundGame.getGame().makeMove(chessMove);
-                    Game updatedGame = gameService.updateGame(auth.getAuthToken(), gameID, foundGame);
-                    move(auth, gameID, chessPiece, chessMove, updatedGame);
-                }catch(InvalidMoveException ime){
-                    error(auth,ime.getMessage());
+    public void onMessage(Session session, String message) throws IOException {
+        Auth auth = null;
+        try {
+            UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
+            auth = userService.verifyUser(userGameCommand.getAuthString());
+            switch (userGameCommand.getCommandType()) {
+                case JOIN_PLAYER, JOIN_OBSERVER -> {
+                    String joinColor = userGameCommand.getJoinColor();
+                    int gameID = userGameCommand.getGameID();
+                    Game game = gameService.getGame(gameID);
+                    join(auth, session, joinColor, game);
+                }
+                case LEAVE -> {
+                    int gameID = userGameCommand.getGameID();
+                    //Game game = gameService.getGame(gameID);
+                    leave(auth, gameID);
+                }
+                case MAKE_MOVE -> {
+                    int gameID = userGameCommand.getGameID();
+                    if(!connections.gamesOver.contains(gameID)) {
+                        ChessMove chessMove = userGameCommand.getMove();
+                        Game foundGame = gameService.getGame(gameID);
+                        String chessPiece = foundGame.getGame().getBoard().getPiece(chessMove.getStartPosition()).toString();
+                        foundGame.getGame().makeMove(chessMove);
+                        Game updatedGame = gameService.updateGame(auth.getAuthToken(), gameID, foundGame);
+                        move(auth, gameID, chessPiece, chessMove, updatedGame);
+                    }else{
+                        error(auth,"The game is over!");
+                    }
+                }
+                case RESIGN -> {
+                    int gameID = userGameCommand.getGameID();
+                    connections.gamesOver.add(gameID);
+                    resign(auth, gameID);
                 }
             }
+        } catch(Exception e){
+            assert auth != null;
+            error(auth,e.getMessage());
         }
+    }
+    private void resign(Auth auth, Integer gameID) throws IOException {
+        String username = auth.getUsername();
+        String authToken = auth.getAuthToken();
+        var message = String.format("%s has resigned from the game.",username);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        serverMessage.addMessage(message);
+        connections.broadcastNotification(authToken, gameID, serverMessage);
+        connections.displayRoot(authToken, serverMessage);
     }
 
     private void move(Auth auth, Integer gameID, String chessPiece, ChessMove chessMove, Game updatedGame) throws IOException {
@@ -65,9 +84,33 @@ public class WebSocketHandler {
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var displayMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         displayMessage.addGame(updatedGame);
-        connections.broadcastGame(displayMessage);
+        connections.broadcastAll(gameID, displayMessage);
         serverMessage.addMessage(message);
         connections.broadcastNotification(authToken, gameID, serverMessage);
+        checkGame(gameID, updatedGame, username);
+    }
+
+    private void checkGame(Integer gameID, Game updatedGame, String username) throws IOException {
+        String check = null, otherPlayer;
+        if(Objects.equals(username, updatedGame.getWhiteUsername())){
+            otherPlayer = updatedGame.getBlackUsername();
+        }else{
+            otherPlayer = updatedGame.getWhiteUsername();
+        }
+        if(updatedGame.getGame().isInCheck(updatedGame.getGame().getTeamTurn())){
+            check = String.format("%s is in check.", otherPlayer);
+        } else if (updatedGame.getGame().isInCheckmate(updatedGame.getGame().getTeamTurn())) {
+            check = String.format("%s is in checkmate.", otherPlayer);
+            connections.gamesOver.add(gameID);
+        } else if (updatedGame.getGame().isInStalemate(updatedGame.getGame().getTeamTurn())) {
+            check = String.format("%s is in stalemate.", otherPlayer);
+            connections.gamesOver.add(gameID);
+        }
+        if(check!=null){
+            var checkMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            checkMessage.addMessage(check);
+            connections.broadcastAll(gameID, checkMessage);
+        }
     }
 
     private void leave(Auth auth, Integer gameID) throws IOException {
@@ -94,7 +137,7 @@ public class WebSocketHandler {
     }
     private void error(Auth auth, String exceptionMessage) throws IOException {
         String authToken = auth.getAuthToken();
-        var message = String.format("Error: %s.",exceptionMessage);
+        var message = String.format("Error: %s",exceptionMessage);
         var displayMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
         displayMessage.addMessage(message);
         connections.displayRoot(authToken, displayMessage);
