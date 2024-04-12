@@ -34,13 +34,13 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public Game updateGame(String username, Integer gameID, String playerColor, Game upGame) {
         Game newGame = games.get(gameID);
-        if(playerColor == null){
-            newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
-        }else {
+        if(playerColor != null){
             switch (playerColor) {
-                case "WHITE" -> newGame = new Game(gameID, username, newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
                 case "BLACK" -> newGame = new Game(gameID, newGame.getWhiteUsername(), username, newGame.getGameName(), upGame.getGame());
+                case "WHITE" -> newGame = new Game(gameID, username, newGame.getBlackUsername(), newGame.getGameName(), upGame.getGame());
             }
+        }else {
+            newGame = new Game(gameID,newGame.getWhiteUsername(),newGame.getBlackUsername(),newGame.getGameName(),upGame.getGame());
         }
         games.remove(gameID);
         games.put(gameID,newGame);

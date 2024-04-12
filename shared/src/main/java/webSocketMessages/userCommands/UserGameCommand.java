@@ -51,9 +51,6 @@ public class UserGameCommand {
     private ChessGame.TeamColor playerColor;
     private int gameID;
 
-    public void setPlayerColor(ChessGame.TeamColor color){
-        playerColor = color;
-    }
     public void setJoinColor(String color){
         if(Objects.equals(color, "WHITE")) {
             playerColor = ChessGame.TeamColor.WHITE;
