@@ -36,12 +36,22 @@ public class WebSocketHandler {
             }
             switch (userGameCommand.getCommandType()) {
                 case JOIN_PLAYER -> {
-                    String joinColor = userGameCommand.getJoinColor();
-                    if(Objects.equals(joinColor, "OBSERVER")){
-                        throw new Exception("Bad Request");
-                    }
+                    String joinColor = userGameCommand.getPlayerColor();
                     int gameID = userGameCommand.getGameID();
                     Game game = gameService.getGame(gameID);
+                    if(Objects.equals(auth.getUsername(), game.getWhiteUsername())){
+                        if(Objects.equals(joinColor, "BLACK")){
+                            throw new Exception("Bad Request");
+                        }
+                        joinColor = "WHITE";
+                    }else if(Objects.equals(auth.getUsername(), game.getBlackUsername())){
+                        if(Objects.equals(joinColor, "WHITE")){
+                            throw new Exception("Bad Request");
+                        }
+                        joinColor = "BLACK";
+                    }else{
+                        throw new Exception("Bad Request!");
+                    }
                     join(auth, session, joinColor, game);
                 }
                 case JOIN_OBSERVER -> {
@@ -82,7 +92,6 @@ public class WebSocketHandler {
                 }
             }
         } catch(Exception e){
-            assert auth != null;
             error(session,e.getMessage());
         }
     }

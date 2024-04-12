@@ -370,7 +370,7 @@ public class Client implements ServerMessageObserver {
             clientDrawChessBoard(curGame);
             gameplayUI();
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
-            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
+            System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getErrorMessage());
         }
         printPrompt();
     }

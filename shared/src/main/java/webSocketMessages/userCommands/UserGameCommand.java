@@ -48,23 +48,26 @@ public class UserGameCommand {
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
-    private ChessGame.TeamColor joinColor;
+    private ChessGame.TeamColor playerColor;
     private int gameID;
 
+    public void setPlayerColor(ChessGame.TeamColor color){
+        playerColor = color;
+    }
     public void setJoinColor(String color){
         if(Objects.equals(color, "WHITE")) {
-            joinColor = ChessGame.TeamColor.WHITE;
+            playerColor = ChessGame.TeamColor.WHITE;
         }else if(Objects.equals(color, "BLACK")){
-            joinColor = ChessGame.TeamColor.BLACK;
+            playerColor = ChessGame.TeamColor.BLACK;
         }else{
-            joinColor = null;
+            playerColor = null;
         }
     }
 
-    public String getJoinColor() {
-        if(joinColor== ChessGame.TeamColor.WHITE){
+    public String getPlayerColor() {
+        if(playerColor == ChessGame.TeamColor.WHITE){
             return "WHITE";
-        }else if(joinColor == ChessGame.TeamColor.BLACK){
+        }else if(playerColor == ChessGame.TeamColor.BLACK){
             return "BLACK";
         }else{
             return "OBSERVER";
