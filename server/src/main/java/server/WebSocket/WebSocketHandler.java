@@ -25,6 +25,10 @@ public class WebSocketHandler {
         this.gameService = gameService;
     }
 
+    public ConnectionManager getConnections(){
+        return connections;
+    }
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         Auth auth = null;
@@ -72,7 +76,7 @@ public class WebSocketHandler {
                         String chessPiece = foundGame.getGame().getBoard().getPiece(chessMove.getStartPosition()).toString();
                         foundGame.getGame().makeMove(chessMove);
                         Game updatedGame = gameService.updateGame(auth.getAuthToken(), gameID, foundGame);
-                        move(auth, gameID, chessPiece, chessMove, updatedGame);
+                        move(auth, session, gameID, chessPiece, chessMove, updatedGame);
                     }else{
                         error(session,"The game is over!");
                     }
@@ -105,14 +109,15 @@ public class WebSocketHandler {
         connections.displayRoot(session, serverMessage);
     }
 
-    private void move(Auth auth, Integer gameID, String chessPiece, ChessMove chessMove, Game updatedGame) throws IOException {
+    private void move(Auth auth, Session session, Integer gameID, String chessPiece, ChessMove chessMove, Game updatedGame) throws IOException {
         String username = auth.getUsername();
         String authToken = auth.getAuthToken();
         var message = String.format("%s has moved a %s from %s to %s.",username, chessPiece, chessMove.getStartPosition(),chessMove.getEndPosition());
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         var displayMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
         displayMessage.addGame(updatedGame);
-        connections.broadcastAll(gameID, displayMessage);
+        connections.displayRoot(session, displayMessage);
+        connections.broadcastNotification(authToken, gameID, displayMessage);
         serverMessage.addMessage(message);
         connections.broadcastNotification(authToken, gameID, serverMessage);
         checkGame(gameID, updatedGame, username);

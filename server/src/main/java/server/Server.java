@@ -60,6 +60,7 @@ public class Server {
     private Object clear(Request req, Response res) {
         try {
             clearService.clear();
+            webSocketHandler.getConnections().clear();
             return "{}";
         }catch(DataAccessException dae){
             return daeHandler(res, dae);

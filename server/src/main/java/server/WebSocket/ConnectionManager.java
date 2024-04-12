@@ -23,6 +23,12 @@ public class ConnectionManager {
         activeGames.remove(authToken, gameID);
     }
 
+    public void clear(){
+        connections.clear();
+        activeGames.clear();
+        gamesOver.clear();
+    }
+
     public void displayRoot(Session session, ServerMessage loadRoot) throws IOException {
         session.getRemote().sendString(loadRoot.toString());
     }
