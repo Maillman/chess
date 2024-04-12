@@ -1,12 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -30,18 +29,22 @@ public class ChessBoardUI {
         initBoard.resetBoard();
         newGame.setBoard(initBoard);
         out.println("White's Perspective:");
-        drawChessBoard(out, newGame, Perspective.WHITE);
+        drawChessBoard(out, newGame, Perspective.WHITE, null);
         out.println();
         out.println("Black's Perspective:");
-        drawChessBoard(out, newGame, Perspective.BLACK);
+        drawChessBoard(out, newGame, Perspective.BLACK, null);
         out.println();
         out.println("Watcher's Perspective:");
-        drawChessBoard(out, newGame, Perspective.WATCH);
+        drawChessBoard(out, newGame, Perspective.WATCH, null);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    public static void drawChessBoard(PrintStream out, ChessGame theGame, Perspective perspective) {
+    public static void drawChessBoard(PrintStream out, ChessGame theGame, Perspective perspective, ChessPosition chessPosition) {
+        Collection<ChessMove> highlightMoves = null;
+        if(chessPosition!=null){
+            highlightMoves = theGame.validMoves(chessPosition);
+        }
         System.out.println("The Board:");
         int boardRow, boardColumn;
         if (perspective== Perspective.BLACK) {
@@ -74,8 +77,17 @@ public class ChessBoardUI {
                         ChessPiece piece = theGame.getBoard().getPiece(new ChessPosition(boardRow,boardColumn));
                         if(boardRow%2==0 ^ boardColumn%2==0){
                             setWhiteSquare(out);
+                            if((highlightMoves!=null)&&highlightMoves.contains(new ChessMove(chessPosition,new ChessPosition(boardRow,boardColumn)))){
+                                setWhiteHighlight(out);
+                            }
                         }else{
                             setBlackSquare(out);
+                            if((highlightMoves!=null)&&highlightMoves.contains(new ChessMove(chessPosition,new ChessPosition(boardRow,boardColumn)))){
+                                setBlackHighlight(out);
+                            }
+                        }
+                        if(Objects.equals(chessPosition, new ChessPosition(boardRow, boardColumn))){
+                            setHighlight(out);
                         }
                         if(piece!=null) {
                             switch (piece.getTeamColor()){
@@ -126,6 +138,15 @@ public class ChessBoardUI {
 
     private static void setWhiteSquare(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
+    }
+    private static void setBlackHighlight(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREEN);
+    }
+    private static void setWhiteHighlight(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
+    }
+    private static void setHighlight(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
     }
 
     private static void setBlackPiece(PrintStream out) {

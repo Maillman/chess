@@ -1,5 +1,6 @@
 package webSocketMessages.userCommands;
 
+import chess.ChessGame;
 import chess.ChessMove;
 
 import java.util.Objects;
@@ -47,15 +48,27 @@ public class UserGameCommand {
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
-    private String joinColor;
+    private ChessGame.TeamColor joinColor;
     private int gameID;
 
     public void setJoinColor(String color){
-        joinColor = color;
+        if(Objects.equals(color, "WHITE")) {
+            joinColor = ChessGame.TeamColor.WHITE;
+        }else if(Objects.equals(color, "BLACK")){
+            joinColor = ChessGame.TeamColor.BLACK;
+        }else{
+            joinColor = null;
+        }
     }
 
     public String getJoinColor() {
-        return joinColor;
+        if(joinColor== ChessGame.TeamColor.WHITE){
+            return "WHITE";
+        }else if(joinColor == ChessGame.TeamColor.BLACK){
+            return "BLACK";
+        }else{
+            return "OBSERVER";
+        }
     }
 
     public ChessMove getMove() {

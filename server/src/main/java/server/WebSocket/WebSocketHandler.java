@@ -31,12 +31,23 @@ public class WebSocketHandler {
         try {
             UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
             auth = userService.verifyUser(userGameCommand.getAuthString());
+            if (auth == null) {
+                throw new Exception("Unauthorized!");
+            }
             switch (userGameCommand.getCommandType()) {
-                case JOIN_PLAYER, JOIN_OBSERVER -> {
+                case JOIN_PLAYER -> {
                     String joinColor = userGameCommand.getJoinColor();
+                    if(Objects.equals(joinColor, "OBSERVER")){
+                        throw new Exception("Bad Request");
+                    }
                     int gameID = userGameCommand.getGameID();
                     Game game = gameService.getGame(gameID);
                     join(auth, session, joinColor, game);
+                }
+                case JOIN_OBSERVER -> {
+                    int gameID = userGameCommand.getGameID();
+                    Game game = gameService.getGame(gameID);
+                    join(auth, session, "OBSERVER", game);
                 }
                 case LEAVE -> {
                     int gameID = userGameCommand.getGameID();
@@ -53,28 +64,36 @@ public class WebSocketHandler {
                         Game updatedGame = gameService.updateGame(auth.getAuthToken(), gameID, foundGame);
                         move(auth, gameID, chessPiece, chessMove, updatedGame);
                     }else{
-                        error(auth,"The game is over!");
+                        error(session,"The game is over!");
                     }
                 }
                 case RESIGN -> {
                     int gameID = userGameCommand.getGameID();
-                    connections.gamesOver.add(gameID);
-                    resign(auth, gameID);
+                    Game game = gameService.getGame(gameID);
+                    if(connections.gamesOver.contains(gameID)){
+                        throw new Exception("The game is over!");
+                    }
+                    if(Objects.equals(auth.getUsername(), game.getWhiteUsername()) || Objects.equals(auth.getUsername(), game.getBlackUsername())) {
+                        connections.gamesOver.add(gameID);
+                        resign(session, auth, gameID);
+                    }else{
+                        throw new Exception("Unauthorized!");
+                    }
                 }
             }
         } catch(Exception e){
             assert auth != null;
-            error(auth,e.getMessage());
+            error(session,e.getMessage());
         }
     }
-    private void resign(Auth auth, Integer gameID) throws IOException {
+    private void resign(Session session, Auth auth, Integer gameID) throws IOException {
         String username = auth.getUsername();
         String authToken = auth.getAuthToken();
         var message = String.format("%s has resigned from the game.",username);
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         serverMessage.addMessage(message);
         connections.broadcastNotification(authToken, gameID, serverMessage);
-        connections.displayRoot(authToken, serverMessage);
+        connections.displayRoot(session, serverMessage);
     }
 
     private void move(Auth auth, Integer gameID, String chessPiece, ChessMove chessMove, Game updatedGame) throws IOException {
@@ -133,13 +152,12 @@ public class WebSocketHandler {
         serverMessage.addMessage(message);
         connections.broadcastNotification(authToken, game.getGameID(), serverMessage);
         displayMessage.addGame(game);
-        connections.displayRoot(authToken, displayMessage);
+        connections.displayRoot(session, displayMessage);
     }
-    private void error(Auth auth, String exceptionMessage) throws IOException {
-        String authToken = auth.getAuthToken();
+    private void error(Session session, String exceptionMessage) throws IOException {
         var message = String.format("Error: %s",exceptionMessage);
         var displayMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-        displayMessage.addMessage(message);
-        connections.displayRoot(authToken, displayMessage);
+        displayMessage.addErrorMessage(message);
+        connections.displayRoot(session, displayMessage);
     }
 }

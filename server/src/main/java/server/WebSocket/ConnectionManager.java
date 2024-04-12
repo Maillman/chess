@@ -23,9 +23,8 @@ public class ConnectionManager {
         activeGames.remove(authToken, gameID);
     }
 
-    public void displayRoot(String authToken, ServerMessage loadRoot) throws IOException {
-        var connection = connections.get(authToken);
-        connection.send(loadRoot.toString());
+    public void displayRoot(Session session, ServerMessage loadRoot) throws IOException {
+        session.getRemote().sendString(loadRoot.toString());
     }
     public void broadcastNotification(String excludeAuthToken, Integer gameID, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();

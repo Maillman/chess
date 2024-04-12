@@ -18,6 +18,16 @@ public class ServerMessage {
 
     Game game;
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void addErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    String errorMessage;
+
     public void addGame(Game game) {
         this.game = game;
     }

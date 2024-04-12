@@ -1,5 +1,6 @@
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -200,6 +201,13 @@ public class Client implements ServerMessageObserver {
                 case "redraw" -> {
                     clientDrawChessBoard(curGame);
                 }
+                case "highlight" -> {
+                    if(result.length >= 2){
+                        char[] pos = result[1].toCharArray();
+                        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+                        ChessBoardUI.drawChessBoard(out,curGame.getGame(), persp,evalPos(pos));
+                    }
+                }
                 case "leave" -> {
                     server.leaveResign(curGame.getGameID(), false, authToken);
                     curGame = null;
@@ -234,28 +242,26 @@ public class Client implements ServerMessageObserver {
         }
     }
 
-    private ChessMove evalMove(char[] moveInChars){
+    private ChessPosition evalPos(char[] moveInChars){
         char[] possibleColMoves = new char[]{'a','b','c','d','e','f','g','h'};
         char[] possibleRowMoves = new char[]{'1','2','3','4','5','6','7','8'};
-        ChessPosition startPos = null, endPos = null;
         int row = 0, col = 0;
-        for(int j = 0; j < 2; j++) {
-            for (int i = 0; i < possibleColMoves.length; i++) {
-                if (possibleColMoves[i] == moveInChars[2*j]) {
-                    col = i+1;
-                }
-            }
-            for (int i = 0; i < possibleRowMoves.length; i++) {
-                if (possibleRowMoves[i] == moveInChars[2*j+1]) {
-                    row = i+1;
-                }
-            }
-            if(j==0) {
-                startPos = new ChessPosition(row, col);
-            }else{
-                endPos = new ChessPosition(row, col);
+        for (int i = 0; i < possibleColMoves.length; i++) {
+            if (possibleColMoves[i] == moveInChars[0]) {
+                col = i+1;
             }
         }
+        for (int i = 0; i < possibleRowMoves.length; i++) {
+            if (possibleRowMoves[i] == moveInChars[1]) {
+                row = i+1;
+            }
+        }
+        return new ChessPosition(row,col);
+    }
+
+    private ChessMove evalMove(char[] moveInChars){
+        ChessPosition startPos = evalPos(Arrays.copyOfRange(moveInChars,0,2));
+        ChessPosition endPos = evalPos(Arrays.copyOfRange(moveInChars,2,4));
         return new ChessMove(startPos,endPos);
     }
 
@@ -300,7 +306,7 @@ public class Client implements ServerMessageObserver {
 
     private void clientDrawChessBoard(Game game) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoardUI.drawChessBoard(out,game.getGame(), persp);
+        ChessBoardUI.drawChessBoard(out,game.getGame(), persp, null);
     }
     private void gameplayUI() {
         uiPreHelper();
