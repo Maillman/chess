@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class ServerFacade {
     private static HTTPCommunicator conn;
@@ -52,9 +53,17 @@ public class ServerFacade {
     public Game join(Join join, String authToken) throws ResponseException {
         var path = "/game";
         conn.addRequestHeader(authToken);
-        var game = conn.makeRequest("PUT", path, join, Game.class);
-        if(ws!=null) {
-            wsJoin(join, authToken);
+        Game game = null;
+        try {
+            game = conn.makeRequest("PUT", path, join, Game.class);
+        }catch(ResponseException re){
+            if(!Objects.equals(re.getMessage(), "Error: Something went wrong with the server. 403 Forbidden")){
+                throw new ResponseException(re.getStatusCode(), re.getMessage());
+            }
+        }finally{
+            if (ws != null) {
+                wsJoin(join, authToken);
+            }
         }
         return game;
     }

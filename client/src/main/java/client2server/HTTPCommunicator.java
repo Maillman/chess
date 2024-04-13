@@ -63,8 +63,9 @@ public class HTTPCommunicator {
     }
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
+        var message = http.getResponseMessage();
         if(!isSuccessful(status)) {
-            throw new ResponseException(status, "Error: Something went wrong with the server. " + status);
+            throw new ResponseException(status, "Error: Something went wrong with the server. " + status + " " + message);
         }
     }
     private boolean isSuccessful(int statusCode) {

@@ -288,10 +288,9 @@ public class Client implements ServerMessageObserver {
         if(Objects.equals(result[0], "join")){
             join = new Join(result[2],Integer.parseInt(result[1]));
             game = server.join(join,authToken);
-            System.out.println("You have successfully joined the game!");
         }else{
-            join = new Join("OBSERVER",Integer.parseInt(result[1]));
-            game = server.join(join,authToken);
+            join = new Join(null,Integer.parseInt(result[1]));
+            curGame = server.join(join,authToken);
             System.out.println("You are observing the game");
         }
         if(Objects.equals(join.getPlayerColor(), "WHITE")){
@@ -366,6 +365,9 @@ public class Client implements ServerMessageObserver {
         if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println("\n" + EscapeSequences.SET_TEXT_COLOR_RED + message.getMessage());
         }else if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            if(curGame==null){
+                System.out.println("You have successfully joined the game!");
+            }
             curGame = message.getGame();
             clientDrawChessBoard(curGame);
             gameplayUI();

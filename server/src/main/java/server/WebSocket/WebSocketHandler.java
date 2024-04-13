@@ -130,11 +130,11 @@ public class WebSocketHandler {
         }else{
             otherPlayer = updatedGame.getWhiteUsername();
         }
-        if(updatedGame.getGame().isInCheck(updatedGame.getGame().getTeamTurn())){
-            check = String.format("%s is in check.", otherPlayer);
-        } else if (updatedGame.getGame().isInCheckmate(updatedGame.getGame().getTeamTurn())) {
+        if (updatedGame.getGame().isInCheckmate(updatedGame.getGame().getTeamTurn())) {
             check = String.format("%s is in checkmate.", otherPlayer);
             connections.gamesOver.add(gameID);
+        } else if(updatedGame.getGame().isInCheck(updatedGame.getGame().getTeamTurn())){
+            check = String.format("%s is in check.", otherPlayer);
         } else if (updatedGame.getGame().isInStalemate(updatedGame.getGame().getTeamTurn())) {
             check = String.format("%s is in stalemate.", otherPlayer);
             connections.gamesOver.add(gameID);
