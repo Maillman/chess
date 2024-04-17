@@ -6,10 +6,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import Model.*;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import client2server.ResponseException;
 import client2server.ServerFacade;
 import client2server.ServerMessageObserver;
@@ -241,10 +238,10 @@ public class Client implements ServerMessageObserver {
             return true;
         }
     }
-
+    char[] possibleColMoves = new char[]{'a','b','c','d','e','f','g','h'};
+    char[] possibleRowMoves = new char[]{'1','2','3','4','5','6','7','8'};
+    char[] possiblePromotionPieces = new char[]{'Q','R','B','N'};
     private ChessPosition evalPos(char[] moveInChars){
-        char[] possibleColMoves = new char[]{'a','b','c','d','e','f','g','h'};
-        char[] possibleRowMoves = new char[]{'1','2','3','4','5','6','7','8'};
         int row = 0, col = 0;
         for (int i = 0; i < possibleColMoves.length; i++) {
             if (possibleColMoves[i] == moveInChars[0]) {
@@ -262,6 +259,15 @@ public class Client implements ServerMessageObserver {
     private ChessMove evalMove(char[] moveInChars){
         ChessPosition startPos = evalPos(Arrays.copyOfRange(moveInChars,0,2));
         ChessPosition endPos = evalPos(Arrays.copyOfRange(moveInChars,2,4));
+        if(moveInChars.length>=5){
+            ChessPiece.PieceType[] possiblePieceTypes = new ChessPiece.PieceType[]{ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.ROOK, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT};
+            for(int i = 0; i < possiblePromotionPieces.length; i++) {
+                if (possiblePromotionPieces[i] == moveInChars[4]) {
+                    ChessPiece.PieceType piecePromotion = possiblePieceTypes[i];
+                    return new ChessMove(startPos,endPos,piecePromotion);
+                }
+            }
+        }
         return new ChessMove(startPos,endPos);
     }
 
