@@ -2,6 +2,7 @@ package serviceTests;
 
 import Model.Auth;
 import Model.Game;
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Order;
@@ -22,7 +23,7 @@ public class CreateListTest extends BaseTest{
         expectedGames.clear();
         resultedGames.clear();
         //The game
-        newGame = new Game(1,"","","newGame",null);
+        newGame = new Game(1,"","","newGame",new ChessGame());
         //create game with authorized user
         auth = register.login(existingUser);
         create.createGame(auth.getAuthToken(),newGame);
@@ -36,8 +37,8 @@ public class CreateListTest extends BaseTest{
     @DisplayName("Create and List Several Games Test!")
     public void create_listGames() throws TestException, DataAccessException {
         //The games
-        Game anotherGame = new Game(2,"","","ssehC",null);
-        Game aNewGame = new Game(3,"","","newGame",null);
+        Game anotherGame = new Game(2,"","","ssehC",new ChessGame());
+        Game aNewGame = new Game(3,"","","newGame",new ChessGame());
         //create games with authorized user
         auth = register.login(existingUser);
         create.createGame(auth.getAuthToken(),anotherGame);
@@ -53,7 +54,7 @@ public class CreateListTest extends BaseTest{
     @DisplayName("Unauthorized Create Game!")
     public void unCreateGame() throws TestException {
         //The game
-        Game newGame = new Game(1,"","","newGame",null);
+        Game newGame = new Game(1,"","","newGame",new ChessGame());
         //create game with unauthorized user
         Assertions.assertThrows(DataAccessException.class, () -> create.createGame("UNLAWFUL CRIMINAL",newGame),"CreateGame not throwing exception!");
     }
@@ -63,8 +64,8 @@ public class CreateListTest extends BaseTest{
     @DisplayName("Unauthorized List Game!")
     public void unListGame() throws TestException, DataAccessException {
         //The games
-        Game anotherGame = new Game(2,"","","ssehC",null);
-        Game aNewGame = new Game(3,"","","newGame",null);
+        Game anotherGame = new Game(2,"","","ssehC",new ChessGame());
+        Game aNewGame = new Game(3,"","","newGame",new ChessGame());
         //create games with authorized user
         auth = register.login(existingUser);
         create.createGame(auth.getAuthToken(),anotherGame);

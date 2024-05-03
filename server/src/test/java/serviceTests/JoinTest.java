@@ -3,6 +3,7 @@ package serviceTests;
 import Model.Auth;
 import Model.Join;
 import Model.Game;
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +20,7 @@ public class JoinTest extends CreateListTest {
         create.joinGame(auth.getAuthToken(),new Join("WHITE",1));
         //getting list of games to compare
         expectedGames.clear();
-        newGame = new Game(1, existingUser.getUsername(), "","newGame",null);
+        newGame = new Game(1, existingUser.getUsername(), "","newGame",new ChessGame());
         expectedGames.add(newGame);
         //check if game updated
         Assertions.assertEquals(expectedGames,create.listGames(auth.getAuthToken()),"The game was not updated correctly!");
