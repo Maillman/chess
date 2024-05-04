@@ -140,13 +140,13 @@ public class ChessBoardUI {
         out.print(SET_BG_COLOR_LIGHT_GREY);
     }
     private static void setBlackHighlight(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREEN);
+        out.print(SET_BG_COLOR_OFF_GREEN);
     }
     private static void setWhiteHighlight(PrintStream out) {
-        out.print(SET_BG_COLOR_GREEN);
+        out.print(SET_BG_COLOR_OFF_LIGHT_GREEN);
     }
     private static void setHighlight(PrintStream out) {
-        out.print(SET_BG_COLOR_YELLOW);
+        out.print(SET_BG_COLOR_DARK_YELLOW);
     }
 
     private static void setBlackPiece(PrintStream out) {
