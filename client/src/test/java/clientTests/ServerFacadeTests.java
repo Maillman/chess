@@ -155,6 +155,6 @@ public class ServerFacadeTests {
         Games theGames = new Games(listOfGames);
         Assertions.assertEquals(user.getUsername(),aGame.getWhiteUsername(),"Player didn't join the game properly.");
         Assertions.assertEquals(theGames,facade.list(authData.getAuthToken()),"The list of games is different than expected");
-        Assertions.assertThrows(ResponseException.class, () -> facade.join(join,authData.getAuthToken()));
+        Assertions.assertEquals(aGame,facade.join(join,authData.getAuthToken()),"White did not join the same game.");
     }
 }
