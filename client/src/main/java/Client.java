@@ -316,21 +316,18 @@ public class Client implements ServerMessageObserver {
     private void gameplayUI() {
         uiPreHelper();
         helpGameplay();
-        System.out.print("\n" + "[Playing]");
         uiPostHelper();
     }
 
     private void postLoginUI() {
         uiPreHelper();
         helpPostLogin();
-        System.out.print("\n" + "[Logged In]");
         uiPostHelper();
     }
 
     private void preLoginUI() {
         uiPreHelper();
         helpPreLogin();
-        System.out.print("\n" + "[Logged Out]");
         uiPostHelper();
     }
     private void uiPreHelper(){
@@ -366,6 +363,9 @@ public class Client implements ServerMessageObserver {
         System.out.println("Quit: Exit the program.");
     }
     private void printPrompt() {
+        if(curGame!=null) System.out.print("\n" + "[Playing]");
+        else if(authToken!=null) System.out.print("\n" + "[Logged In]");
+        else System.out.print("\n" + "[Logged Out]");
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN + " >>> " + EscapeSequences.SET_TEXT_COLOR_WHITE);
     }
 
